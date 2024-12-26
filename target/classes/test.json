@@ -1,0 +1,64 @@
+{
+    "questions":[
+        {
+            "id": 1,
+            "values": [
+                {
+                    "text": "bla-bla",
+                    "valid": "false"
+                },
+                {
+                    "text": "bla-bla=bla",
+                    "valid": "false"
+                },
+                {
+                    "text": "bla-bla=0",
+                    "valid": "true"
+                }
+            ],
+            "level": 0,
+            "imgPath": "/home/mrlk/Pictures/spider.png",
+            "fullAnswer": "it true full answer"
+        },
+        {
+            "id": 2,
+            "values": [
+                {
+                    "text": "lol+bla",
+                    "valid": "false"
+                },
+                {
+                    "text": "lol+bla=0",
+                    "valid": "false"
+                },
+                {
+                    "text": "lol+bla=lolbla",
+                    "valid": "true"
+                }
+            ],
+            "level": 1,
+            "imgPath": "/home/mrlk/Pictures/spider.png",
+            "fullAnswer": "it true full answer"
+        },
+        {
+            "id": 2,
+            "values": [
+                {
+                    "text": "test",
+                    "valid": "false"
+                },
+                {
+                    "text": "test 2",
+                    "valid": "false"
+                },
+                {
+                    "text": "tes 4",
+                    "valid": "true"
+                }
+            ],
+            "level": 2,
+            "imgPath": "/home/mrlk/Pictures/spider.png",
+            "fullAnswer": "it true full answer"
+        }
+    ]
+}
