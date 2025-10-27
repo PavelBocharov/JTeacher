@@ -1,7 +1,6 @@
-package com.mar.service;
+package com.mar.data;
 
 import java.io.Serializable;
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,8 +13,9 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Questions implements Serializable {
-
-    private List<Question> questions;
+public class QuestionOption implements Serializable {
+    
+    private String text;
+    private Option option;
 
 }

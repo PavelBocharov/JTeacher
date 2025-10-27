@@ -1,0 +1,171 @@
+{
+  "type": "/java",
+  "description": "Тест по лямбда-выражениям и функциональным интерфейсам в Java",
+  "questions": [
+    {
+      "question": "Что такое «лямбда»? Какова структура и особенности использования лямбда-выражения?",
+      "options": [
+        "A: Анонимная функция для создания объектов",
+        "B: Способ определения методов в интерфейсах",
+        "C: Краткая форма записи анонимных классов",
+        "D: Синтаксис для создания потоков данных"
+      ],
+      "correct_answer": "C",
+      "detailed_answer": "Лямбда-выражение в Java - это краткая форма записи анонимных классов, реализующих функциональные интерфейсы.\n\n*Структура:* `(параметры) -> {тело}`\n\n*Примеры:*\n```java\n() -> System.out.println(\"Hello\")\n(x, y) -> x + y\nn -> n * n\n```\n\n*Особенности:*\n• Не требует явного указания типа\n• Может захватывать effectively final переменные\n• Не создает новый scope для переменных"
+    },
+    {
+      "question": "К каким переменным есть доступ у лямбда-выражений?",
+      "options": [
+        "A: Только к статическим переменным класса",
+        "B: Только к `final` и `effectively final` локальным",
+        "C: Ко всем переменным окружающего контекста",
+        "D: Только к параметрам самого лямбда-выражения"
+      ],
+      "correct_answer": "B",
+      "detailed_answer": "Лямбда-выражения имеют доступ к:\n\n✅ *final и effectively final локальным переменным*\n`effectively final` - переменные, которые не изменяются после инициализации\n\n✅ *Полям класса* (статическим и экземпляра)\n\n*Пример:*\n```java\nint external = 10; // effectively final\nFunction<Integer, Integer> lambda = x -> x + external;\n```"
+    },
+    {
+      "question": "Как отсортировать список строк с помощью лямбда-выражения?",
+      "options": [
+        "A: `list.sort((a, b) -> a.compareTo(b))`",
+        "B: `list.sort(a, b -> a - b)`",
+        "C: `list.sort(String::compare)`",
+        "D: `list.sort(() -> comparator)`"
+      ],
+      "correct_answer": "A",
+      "detailed_answer": "Сортировка списка строк с помощью лямбда-выражений:\n\n```java\nList<String> list = Arrays.asList(\"banana\", \"apple\", \"cherry\");\n\n// Лямбда-выражение:\nlist.sort((a, b) -> a.compareTo(b));\n\n// Ссылка на метод:\nlist.sort(String::compareTo);\n\n// Обратный порядок:\nlist.sort((a, b) -> b.compareTo(a));\n```"
+    },
+    {
+      "question": "Что такое «ссылка на метод»?",
+      "options": [
+        "A: Ссылка на объект метода",
+        "B: Указатель на функцию в памяти",
+        "C: Краткая форма лямбда-выражения",
+        "D: Способ вызова статических методов"
+      ],
+      "correct_answer": "C",
+      "detailed_answer": "Ссылка на метод - это *краткая форма лямбда-выражения*, когда лямбда просто вызывает существующий метод.\n\n*Синтаксис:* `ClassName::methodName`\n\n*Примеры замены лямбд на ссылки:*\n```java\n// Лямбда:         x -> System.out.println(x)\n// Ссылка на метод: System.out::println\n\n// Лямбда:         s -> s.length()\n// Ссылка на метод: String::length\n\n// Лямбда:         () -> new ArrayList<>()\n// Ссылка на метод: ArrayList::new\n```"
+    },
+    {
+      "question": "Какие виды ссылок на методы вы знаете?",
+      "options": [
+        "A: Статические, экземпляра, конструкторы",
+        "B: Публичные, приватные, защищенные",
+        "C: Локальные, глобальные, внешние",
+        "D: Прямые, косвенные, виртуальные"
+      ],
+      "correct_answer": "A",
+      "detailed_answer": "*Виды ссылок на методов в Java:*\n\n1. *Ссылка на статический метод*\n`ClassName::staticMethodName`\n```java\nПример: Integer::parseInt\n```\n\n2. *Ссылка на метод экземпляра*\n`object::instanceMethodName`\n```java\nПример: System.out::println\n```\n\n3. *Ссылка на метод произвольного объекта*\n`ClassName::instanceMethodName`\n```java\nПример: String::length\n```\n\n4. *Ссылка на конструктор*\n`ClassName::new`\n```java\nПример: ArrayList::new\n```"
+    },
+    {
+      "question": "Объясните выражение `System.out::println`.",
+      "options": [
+        "A: Ссылка на статический метод `out`",
+        "B: Ссылка на метод экземпляра `println`",
+        "C: Ссылка на конструктор `PrintStream`",
+        "D: Ссылка на метод произвольного объекта"
+      ],
+      "correct_answer": "B",
+      "detailed_answer": "Выражение `System.out::println` - это *ссылка на метод экземпляра*.\n\n*Разбор:*\n• `System.out` - объект типа `PrintStream`\n• `println` - метод экземпляра этого объекта\n\n*Эквивалентная лямбда:*\n```java\nstr -> System.out.println(str)\n```\n\n*Использование:*\n```java\nList<String> list = Arrays.asList(\"a\", \"b\", \"c\");\nlist.forEach(System.out::println);\n```"
+    },
+    {
+      "question": "Что такое «функциональные интерфейсы»?",
+      "options": [
+        "A: Интерфейсы с аннотацией `@FunctionalInterface`",
+        "B: Интерфейсы с одним абстрактным методом",
+        "C: Интерфейсы для работы с функциями",
+        "D: Интерфейсы содержащие только статические методы"
+      ],
+      "correct_answer": "B",
+      "detailed_answer": "*Функциональные интерфейсы* - это интерфейсы, которые содержат *ровно один абстрактный метод*.\n\n*Ключевые особенности:*\n• Могут иметь множество default и static методов\n• Аннотация `@FunctionalInterface` не обязательна, но рекомендуется\n• Позволяют использовать лямбда-выражения\n\n*Примеры встроенных функциональных интерфейсов:*\n`Function<T,R>`    - T -> R\n`Consumer<T>`      - T -> void\n`Supplier<T>`      - () -> T\n`Predicate<T>`     - T -> boolean\n`Runnable`         - () -> void"
+    },
+    {
+      "question": "Для чего нужны функциональные интерфейсы *Function<T,R>*, *DoubleFunction<R>*, *IntFunction<R>* и *LongFunction<R>*?",
+      "options": [
+        "A: Для операций с одним аргументом и возвратом результата",
+        "B: Для потребителей данных без возврата значения",
+        "C: Для поставщиков данных без аргументов",
+        "D: Для бинарных операций с двумя аргументами"
+      ],
+      "correct_answer": "A",
+      "detailed_answer": "Эти интерфейсы представляют *функции*, которые принимают один аргумент и возвращают результат.\n\n*Function<T,R>* - принимает объект типа `T`, возвращает `R`\n*DoubleFunction<R>* - принимает `double`, возвращает `R`\n*IntFunction<R>* - принимает `int`, возвращает `R`  \n*LongFunction<R>* - принимает `long`, возвращает `R`\n\n```java\nFunction<String, Integer> stringToInt = Integer::parseInt;\nIntFunction<String> intToString = i -> \"Number: \" + i;\nDoubleFunction<Double> square = x -> x * x;\n\nSystem.out.println(stringToInt.apply(\"123\")); // 123\nSystem.out.println(intToString.apply(42)); // \"Number: 42\"\nSystem.out.println(square.apply(5.0)); // 25.0\n```\n\n*Основные методы:*\n• `apply(T t)` - применение функции\n• `andThen()` - композиция функций\n• `compose()` - обратная композиция"
+    },
+    {
+      "question": "Для чего нужны функциональные интерфейсы *UnaryOperator<T>*, *DoubleUnaryOperator*, *IntUnaryOperator* и *LongUnaryOperator*?",
+      "options": [
+        "A: Для унарных операций с аргументом и возвратом того же типа",
+        "B: Для операций с разными типами аргумента и возврата",
+        "C: Для операций без аргументов",
+        "D: Для операций с двумя аргументами"
+      ],
+      "correct_answer": "A",
+      "detailed_answer": "*UnaryOperator* представляет операцию над одним операндом, возвращающую результат *того же типа*.\n\n*UnaryOperator<T>* - `T → T`\n*DoubleUnaryOperator* - `double → double`\n*IntUnaryOperator* - `int → int`\n*LongUnaryOperator* - `long → long`\n\n```java\nUnaryOperator<String> toUpperCase = String::toUpperCase;\nIntUnaryOperator increment = x -> x + 1;\nDoubleUnaryOperator negate = x -> -x;\n\nSystem.out.println(toUpperCase.apply(\"hello\")); // \"HELLO\"\nSystem.out.println(increment.applyAsInt(5)); // 6\nSystem.out.println(negate.applyAsDouble(3.14)); // -3.14\n```\n\n*Типичные use cases:*\n• Преобразования в потоковых операциях\n• Математические операции\n• Изменение состояния объектов"
+    },
+    {
+      "question": "Для чего нужны функциональные интерфейсы *BinaryOperator<T>*, *DoubleBinaryOperator*, *IntBinaryOperator* и *LongBinaryOperator*?",
+      "options": [
+        "A: Для бинарных операций с двумя аргументами одного типа",
+        "B: Для операций с тремя аргументами",
+        "C: Для операций с разными типами аргументов",
+        "D: Для операций без возвращаемого значения"
+      ],
+      "correct_answer": "A",
+      "detailed_answer": "*BinaryOperator* представляет операцию над *двумя операндами одного типа*, возвращающую результат того же типа.\n\n*BinaryOperator<T>* - `(T, T) → T`\n*DoubleBinaryOperator* - `(double, double) → double`\n*IntBinaryOperator* - `(int, int) → int`\n*LongBinaryOperator* - `(long, long) → long`\n\n```java\nBinaryOperator<Integer> sum = Integer::sum;\nIntBinaryOperator max = Math::max;\nDoubleBinaryOperator multiply = (a, b) -> a * b;\n\nSystem.out.println(sum.apply(10, 20)); // 30\nSystem.out.println(max.applyAsInt(5, 8)); // 8\nSystem.out.println(multiply.applyAsDouble(2.5, 4.0)); // 10.0\n```\n\n*Методы по умолчанию:*\n• `minBy(Comparator)` - возвращает минимальный элемент\n• `maxBy(Comparator)` - возвращает максимальный элемент"
+    },
+    {
+      "question": "Для чего нужны функциональные интерфейсы *Predicate<T>*, *DoublePredicate*, *IntPredicate* и *LongPredicate*?",
+      "options": [
+        "A: Для проверки условий и возврата boolean",
+        "B: Для преобразования типов данных",
+        "C: Для выполнения действий без возврата",
+        "D: Для генерации случайных значений"
+      ],
+      "correct_answer": "A",
+      "detailed_answer": "*Predicate* интерфейсы используются для *проверки условий* и возвращают `boolean`.\n\n*Predicate<T>* - `T → boolean`\n*DoublePredicate* - `double → boolean`\n*IntPredicate* - `int → boolean`\n*LongPredicate* - `long → boolean`\n\n```java\nPredicate<String> isEmpty = String::isEmpty;\nIntPredicate isEven = n -> n % 2 == 0;\nDoublePredicate isPositive = x -> x > 0;\n\nSystem.out.println(isEmpty.test(\"\")); // true\nSystem.out.println(isEven.test(4)); // true\nSystem.out.println(isPositive.test(-5.0)); // false\n```\n\n*Методы для комбинации предикатов:*\n• `and(Predicate)` - логическое И\n• `or(Predicate)` - логическое ИЛИ\n• `negate()` - логическое НЕТ\n\n```java\nPredicate<Integer> isEvenAndPositive = isEven.and(n -> n > 0);\nSystem.out.println(isEvenAndPositive.test(4)); // true\n```"
+    },
+    {
+      "question": "Для чего нужны функциональные интерфейсы *Consumer<T>*, *DoubleConsumer*, *IntConsumer* и *LongConsumer*?",
+      "options": [
+        "A: Для операций с аргументом без возврата значения",
+        "B: Для операций с возвратом результата",
+        "C: Для операций без аргументов",
+        "D: Для операций проверки условий"
+      ],
+      "correct_answer": "A",
+      "detailed_answer": "*Consumer* интерфейсы выполняют *операции с аргументом без возврата значения* (side-effects).\n\n*Consumer<T>* - `T → void`\n*DoubleConsumer* - `double → void`\n*IntConsumer* - `int → void`\n*LongConsumer* - `long → void`\n\n```java\nConsumer<String> printer = System.out::println;\nIntConsumer squarePrinter = x -> System.out.println(x * x);\nDoubleConsumer rounder = x -> System.out.println(Math.round(x));\n\nprinter.accept(\"Hello World\"); // Выводит \"Hello World\"\nsquarePrinter.accept(5); // Выводит 25\nrounder.accept(3.14); // Выводит 3\n```\n\n*Типичные применения:*\n• Вывод в консоль\n• Изменение внешнего состояния\n• Логирование\n• Запись в файл/БД"
+    },
+    {
+      "question": "Для чего нужны функциональные интерфейсы *Supplier<T>*, *BooleanSupplier*, *DoubleSupplier*, *IntSupplier* и *LongSupplier*?",
+      "options": [
+        "A: Для поставки значений без аргументов",
+        "B: Для операций с одним аргументом",
+        "C: Для операций с двумя аргументами",
+        "D: Для проверки условий"
+      ],
+      "correct_answer": "A",
+      "detailed_answer": "*Supplier* интерфейсы *поставляют значения* без приема аргументов.\n\n*Supplier<T>* - `() → T`\n*BooleanSupplier* - `() → boolean`\n*DoubleSupplier* - `() → double`\n*IntSupplier* - `() → int`\n*LongSupplier* - `() → long`\n\n```java\nSupplier<String> greeting = () -> \"Hello, World!\";\nIntSupplier randomInt = () -> (int) (Math.random() * 100);\nDoubleSupplier pi = () -> Math.PI;\nBooleanSupplier isMorning = () -> LocalTime.now().getHour() < 12;\n\nSystem.out.println(greeting.get()); // \"Hello, World!\"\nSystem.out.println(randomInt.getAsInt()); // Случайное число\nSystem.out.println(pi.getAsDouble()); // 3.14159...\nSystem.out.println(isMorning.getAsBoolean()); // true/false\n```\n\n*Основные use cases:*\n• Ленивая инициализация\n• Генерация случайных значений\n• Фабричные методы\n• Получение текущего времени/даты"
+    },
+    {
+      "question": "Для чего нужен функциональный интерфейс *BiConsumer<T,U>*?",
+      "options": [
+        "A: Для операции с двумя аргументами без возврата",
+        "B: Для операции с одним аргументом и возвратом",
+        "C: Для операции без аргументов с возвратом",
+        "D: Для операции с тремя аргументами"
+      ],
+      "correct_answer": "A",
+      "detailed_answer": "*BiConsumer<T,U>* выполняет *операцию с двумя аргументами разных типов* без возврата значения.\n\n*Сигнатура:* `(T, U) → void`\n\n```java\nBiConsumer<String, Integer> printer = (name, age) -> \n    System.out.println(name + \" is \" + age + \" years old\");\n\nMap<String, Integer> ages = Map.of(\"Alice\", 25, \"Bob\", 30);\nages.forEach(printer); // Выводит \"Alice is 25 years old\", \"Bob is 30 years old\"\n\n// Работа с Map\nBiConsumer<String, String> mapMerger = (key, value) -> \n    System.out.println(\"Key: \" + key + \", Value: \" + value);\n```\n\n*Основные методы:*\n• `accept(T t, U u)` - выполнение операции\n• `andThen(BiConsumer)` - цепочка операций\n\n*Типичные применения:*\n• Обработка пар ключ-значение в Map\n• Запись в несколько выходных потоков\n• Обновление нескольких полей объекта"
+    },
+    {
+      "question": "Для чего нужен функциональный интерфейс *BiFunction<T,U,R>*?",
+      "options": [
+        "A: Для операции с двумя аргументами и возвратом результата",
+        "B: Для операции с одним аргументом без возврата",
+        "C: Для операции без аргументов с возвратом",
+        "D: Для операции проверки условий"
+      ],
+      "correct_answer": "A",
+      "detailed_answer": "*BiFunction<T,U,R>* представляет *функцию с двумя аргументами разных типов*, возвращающую результат.\n\n*Сигнатура:* `(T, U) → R`\n\n```java\nBiFunction<String, String, String> concat = (s1, s2) -> s1 + \" \" + s2;\nBiFunction<Integer, Integer, Double> average = (a, b) -> (a + b) / 2.0;\n\nSystem.out.println(concat.apply(\"Hello\", \"World\")); // \"Hello World\"\nSystem.out.println(average.apply(10, 20)); // 15.0\n\n// Использование в Stream API\nList<String> list1 = List.of(\"A\", \"B\");\nList<String> list2 = List.of(\"1\", \"2\");\nList<String> result = list1.stream()\n    .flatMap(s1 -> list2.stream().map(s2 -> s1 + s2))\n    .collect(Collectors.toList()); // [\"A1\", \"A2\", \"B1\", \"B2\"]\n```\n\n*Методы:*\n• `apply(T t, U u)` - применение функции\n• `andThen(Function)` - композиция с другой функцией"
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "type": "/python",
+  "description": "Тест по Python для разработчиков",
+  "questions": [
+    {
+      "question": "Что такое списковые включения (list comprehensions) и как они работают?",
+      "options": [
+        "A: Метод для создания списков с помощью циклов в одну строку",
+        "B: Функция для фильтрации списков",
+        "C: Способ объединения нескольких списков",
+        "D: Библиотека для работы с коллекциями"
+      ],
+      "correct_answer": "A",
+      "detailed_answer": "Списковые включения - это компактный способ создания списков с помощью циклов и условий в одну строку.\n\n*Базовый синтаксис:*\n```python\n[expression for item in iterable if condition]\n```\n\n*Примеры:*\n```python\n# Создание списка квадратов\nsquares = [x**2 for x in range(10)]\n# Результат: [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]\n\n# Фильтрация четных чисел\neven_numbers = [x for x in range(20) if x % 2 == 0]\n# Результат: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]\n\n# Работа со строками\nwords = ['hello', 'world', 'python']\nuppercase = [word.upper() for word in words]\n# Результат: ['HELLO', 'WORLD', 'PYTHON']\n```\n\n*Преимущества:*\n• Более читаемый и компактный код\n• Часто работает быстрее обычных циклов\n• Удобен для простых преобразований"
+    },
+    {
+      "question": "В чем разница между списками (list) и кортежами (tuple) в Python?",
+      "options": [
+        "A: Списки изменяемые, кортежи неизменяемые",
+        "B: Списки для чисел, кортежи для строк",
+        "C: Списки быстрее, кортежи медленнее",
+        "D: Списки занимают меньше памяти"
+      ],
+      "correct_answer": "A",
+      "detailed_answer": "Основное отличие: *списки изменяемые (mutable), кортежи неизменяемые (immutable)*.\n\n*Списки (list):*\n```python\nmy_list = [1, 2, 3]\nmy_list[0] = 10  # Изменение элемента\nmy_list.append(4)  # Добавление элемента\nmy_list.remove(2)  # Удаление элемента\n# Результат: [10, 3, 4]\n```\n\n*Кортежи (tuple):*\n```python\nmy_tuple = (1, 2, 3)\n# my_tuple[0] = 10  # ОШИБКА! Кортежи неизменяемы\n# my_tuple.append(4)  # ОШИБКА! Нет метода append\n\n# Можно создавать новые кортежи\nnew_tuple = my_tuple + (4, 5)\n# Результат: (1, 2, 3, 4, 5)\n```\n\n*Когда использовать:*\n• *Списки* - когда данные могут изменяться\n• *Кортежи* - для константных данных, ключей словарей"
+    },
+    {
+      "question": "Что такое декораторы в Python и как они работают?",
+      "options": [
+        "A: Функции, которые изменяют поведение других функций",
+        "B: Специальные комментарии для документации",
+        "C: Методы оформления текста в выводе",
+        "D: Библиотека для визуализации данных"
+      ],
+      "correct_answer": "A",
+      "detailed_answer": "Декораторы - это функции, которые принимают другую функцию и расширяют её поведение без изменения исходного кода.\n\n*Базовый синтаксис:*\n```python\n@decorator\ndef my_function():\n    pass\n```\n\n*Пример создания декоратора:*\n```python\ndef timer_decorator(func):\n    import time\n    def wrapper(*args, **kwargs):\n        start_time = time.time()\n        result = func(*args, **kwargs)\n        end_time = time.time()\n        print(f\"Функция {func.__name__} выполнялась {end_time - start_time:.2f} секунд\")\n        return result\n    return wrapper\n\n# Использование декоратора\n@timer_decorator\ndef slow_function():\n    time.sleep(1)\n    return \"Готово!\"\n\nresult = slow_function()\n# Вывод: Функция slow_function выполнялась 1.00 секунд\n```\n\n*Встроенные декораторы:*\n```python\n@property\ndef name(self):\n    return self._name\n\n@classmethod\ndef from_string(cls, string):\n    return cls(string)\n\n@staticmethod\ndef utility_method():\n    return \"Вспомогательный метод\"\n```"
+    },
+    {
+      "question": "Как работает менеджер контекста (with statement) в Python?",
+      "options": [
+        "A: Для автоматического управления ресурсами",
+        "B: Для создания контекстных переменных",
+        "C: Для работы с текстовыми контекстами",
+        "D: Для управления областью видимости"
+      ],
+      "correct_answer": "A",
+      "detailed_answer": "Менеджер контекста (`with`) обеспечивает автоматическое управление ресурсами (файлы, соединения и т.д.).\n\n*Базовое использование:*\n```python\nwith open('file.txt', 'r') as file:\n    content = file.read()\n# Файл автоматически закрывается\n```\n\n*Создание собственного менеджера контекста:*\n```python\nfrom contextlib import contextmanager\n\n@contextmanager\ndef timer():\n    import time\n    start = time.time()\n    try:\n        yield\n    finally:\n        end = time.time()\n        print(f\"Время выполнения: {end - start:.2f} секунд\")\n\n# Использование\nwith timer():\n    time.sleep(1)\n    print(\"Выполняю работу...\")\n```\n\n*Через класс:*\n```python\nclass DatabaseConnection:\n    def __enter__(self):\n        print(\"Устанавливаю соединение с БД\")\n        return self\n    \n    def __exit__(self, exc_type, exc_val, exc_tb):\n        print(\"Закрываю соединение с БД\")\n\nwith DatabaseConnection() as db:\n    print(\"Работаю с базой данных...\")\n```"
+    },
+    {
+      "question": "Что такое генераторы в Python и как они экономят память?",
+      "options": [
+        "A: Функции с yield, которые генерируют значения по требованию",
+        "B: Библиотека для создания случайных чисел",
+        "C: Метод оптимизации циклов for",
+        "D: Способ создания коллекций данных"
+      ],
+      "correct_answer": "A",
+      "detailed_answer": "Генераторы - это функции, которые возвращают итератор и генерируют значения по одному по требованию, экономя память.\n\n*Создание генератора:*\n```python\ndef countdown(n):\n    while n > 0:\n        yield n\n        n -= 1\n\n# Использование\nfor number in countdown(5):\n    print(number)\n# Вывод: 5, 4, 3, 2, 1\n```\n\n*Выражения-генераторы:*\n```python\n# Генераторное выражение (круглые скобки)\nsquares_gen = (x**2 for x in range(1000000))\n\n# Сравнение с списком\nsquares_list = [x**2 for x in range(1000000)]\n\nprint(f\"Генератор: {sys.getsizeof(squares_gen)} байт\")\nprint(f\"Список: {sys.getsizeof(squares_list)} байт\")\n```\n\n*Преимущества генераторов:*\n• Экономят память (генерируют значения по требованию)\n• Поддерживают ленивые вычисления\n• Полезны для работы с большими данными\n\n*Пример с файлом:*\n```python\ndef read_large_file(file_path):\n    with open(file_path, 'r') as file:\n        for line in file:\n            yield line.strip()\n\n# Чтение огромного файла без загрузки в память\nfor line in read_large_file('huge_file.txt'):\n    process_line(line)\n```"
+    },
+    {
+      "question": "Как работают исключения (exceptions) в Python?",
+      "options": [
+        "A: Механизм обработки ошибок через try/except/finally",
+        "B: Способ остановки выполнения программы",
+        "C: Метод валидации входных данных",
+        "D: Библиотека для тестирования кода"
+      ],
+      "correct_answer": "A",
+      "detailed_answer": "Исключения в Python обрабатываются через блоки `try/except/finally`.\n\n*Базовая структура:*\n```python\ntry:\n    # Код, который может вызвать исключение\n    result = 10 / 0\nexcept ZeroDivisionError:\n    # Обработка конкретного исключения\n    print(\"Деление на ноль!\")\nexcept Exception as e:\n    # Обработка всех остальных исключений\n    print(f\"Произошла ошибка: {e}\")\nelse:\n    # Выполняется, если исключений не было\n    print(\"Операция завершена успешно\")\nfinally:\n    # Выполняется всегда\n    print(\"Блок finally выполнен\")\n```\n\n*Создание пользовательских исключений:*\n```python\nclass NegativeNumberError(Exception):\n    \"\"\"Исключение для отрицательных чисел\"\"\"\n    def __init__(self, value):\n        self.value = value\n        super().__init__(f\"Отрицательное число: {value}\")\n\ndef sqrt_positive(x):\n    if x < 0:\n        raise NegativeNumberError(x)\n    return x ** 0.5\n\n# Использование\ntry:\n    result = sqrt_positive(-10)\nexcept NegativeNumberError as e:\n    print(f\"Ошибка: {e}\")\n```\n\n*Встроенные исключения:*\n• `ValueError` - неверное значение\n• `TypeError` - неверный тип\n• `KeyError` - ключ не найден в словаре\n• `IndexError` - индекс вне диапазона"
+    },
+    {
+      "question": "Что такое модули и пакеты в Python?",
+      "options": [
+        "A: Модули - файлы .py, пакеты - папки с __init__.py",
+        "B: Модули - библиотеки, пакеты - функции",
+        "C: Модули - классы, пакеты - коллекции классов",
+        "D: Модули - переменные, пакеты - группы переменных"
+      ],
+      "correct_answer": "A",
+      "detailed_answer": "*Модули* - это файлы с расширением .py, содержащие код Python.\n*Пакеты* - это папки, содержащие файл `__init__.py` и другие модули.\n\n*Структура проекта:*\n```\nmyproject/\n├── main.py\n├── utils/\n│   ├── __init__.py\n│   ├── math_utils.py\n│   └── string_utils.py\n└── models/\n    ├── __init__.py\n    └── user.py\n```\n\n*Импорт модулей:*\n```python\n# Импорт всего модуля\nimport math\nprint(math.sqrt(16))\n\n# Импорт конкретных функций\nfrom math import sqrt, pi\nprint(sqrt(25))\n\n# Импорт с псевдонимом\nimport numpy as np\nimport pandas as pd\n```\n\n*Импорт из пакетов:*\n```python\n# Абсолютный импорт\nfrom utils.math_utils import add, multiply\nfrom models.user import User\n\n# Относительный импорт (внутри пакета)\n# from .math_utils import add\n# from ..models.user import User\n```\n\n*Файл __init__.py:*\n```python\n# utils/__init__.py\nfrom .math_utils import add, multiply\nfrom .string_utils import capitalize_all\n\n__all__ = ['add', 'multiply', 'capitalize_all']\n```"
+    }
+  ]
+}

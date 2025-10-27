@@ -1,0 +1,83 @@
+{
+  "type": "/sql",
+  "description": "Тест по PostgreSQL для разработчиков",
+  "questions": [
+    {
+      "question": "Что такое CTE (Common Table Expressions) и для чего они используются?",
+      "options": [
+        "A: Временные таблицы, существующие только во время сессии",
+        "B: Именованные подзапросы, улучшающие читаемость сложных запросов",
+        "C: Глобальные временные таблицы для всех пользователей",
+        "D: Системные таблицы для метаданных БД"
+      ],
+      "correct_answer": "B",
+      "detailed_answer": "CTE (Common Table Expressions) - это именованные временные результирующие наборы, которые существуют только во время выполнения запроса.\n\n*Синтаксис:*\n```sql\nWITH cte_name AS (\n    SELECT column1, column2\n    FROM table_name\n    WHERE condition\n)\nSELECT * FROM cte_name;\n```\n\n*Преимущества:*\n• Улучшают читаемость сложных запросов\n• Позволяют рекурсивные запросы\n• Могут использоваться многократно в одном запросе\n\n*Пример рекурсивного CTE:*\n```sql\nWITH RECURSIVE numbers AS (\n    SELECT 1 as n\n    UNION ALL\n    SELECT n + 1 FROM numbers WHERE n < 10\n)\nSELECT * FROM numbers;\n```"
+    },
+    {
+      "question": "Какая разница между INNER JOIN и LEFT JOIN?",
+      "options": [
+        "A: INNER JOIN возвращает все строки, LEFT JOIN только совпадающие",
+        "B: INNER JOIN возвращает совпадающие строки, LEFT JOIN все строки левой таблицы",
+        "C: Оба возвращают одинаковый результат, но разная производительность",
+        "D: INNER JOIN для числовых полей, LEFT JOIN для текстовых"
+      ],
+      "correct_answer": "B",
+      "detailed_answer": "*INNER JOIN vs LEFT JOIN:*\n\n*INNER JOIN* - возвращает только строки, где есть совпадение в обеих таблицах\n*LEFT JOIN* - возвращает все строки из левой таблицы и совпадающие из правой\n\n*Пример:*\n```sql\n-- INNER JOIN (только сотрудники с отделами)\nSELECT e.name, d.department_name\nFROM employees e\nINNER JOIN departments d ON e.department_id = d.id;\n\n-- LEFT JOIN (все сотрудники, даже без отделов)\nSELECT e.name, d.department_name\nFROM employees e\nLEFT JOIN departments d ON e.department_id = d.id;\n```\n\n*Визуализация:*\nINNER JOIN: ∩ (пересечение)\nLEFT JOIN: все из левой + совпадения из правой"
+    },
+    {
+      "question": "Что такое оконные функции (Window Functions) в PostgreSQL?",
+      "options": [
+        "A: Функции для работы с окнами приложения",
+        "B: Функции, выполняемые над набором строк без группировки",
+        "C: Функции для создания новых окон в БД",
+        "D: Системные функции управления окнами сессий"
+      ],
+      "correct_answer": "B",
+      "detailed_answer": "Оконные функции выполняют вычисления над набором строк, связанных с текущей строкой, без группировки результатов.\n\n*Синтаксис:*\n```sql\nfunction_name() OVER (\n    PARTITION BY column\n    ORDER BY column\n    frame_clause\n)\n```\n\n*Популярные оконные функции:*\n• `ROW_NUMBER()` - номер строки в партиции\n• `RANK()` - ранг с пропусками\n• `DENSE_RANK()` - ранг без пропусков\n• `LAG()/LEAD()` - доступ к предыдущей/следующей строке\n\n*Пример:*\n```sql\nSELECT \n    name,\n    department,\n    salary,\n    RANK() OVER (PARTITION BY department ORDER BY salary DESC) as rank_in_dept\nFROM employees;\n```"
+    },
+    {
+      "question": "Для чего используется команда EXPLAIN в PostgreSQL?",
+      "options": [
+        "A: Для объяснения структуры таблиц",
+        "B: Для показа плана выполнения запроса",
+        "C: Для описания функций БД",
+        "D: Для объяснения синтаксиса SQL"
+      ],
+      "correct_answer": "B",
+      "detailed_answer": "EXPLAIN показывает план выполнения запроса, что помогает в оптимизации.\n\n*Базовое использование:*\n```sql\nEXPLAIN SELECT * FROM users WHERE age > 30;\n```\n\n*С анализом стоимости:*\n```sql\nEXPLAIN ANALYZE SELECT * FROM users WHERE age > 30;\n```\n\n*Ключевые элементы плана:*\n• *Seq Scan* - последовательное сканирование\n• *Index Scan* - сканирование по индексу\n• *Nested Loop* - вложенные циклы\n• *Hash Join* - соединение хешированием\n\n*Пример оптимизации:*\n```sql\n-- До индекса\nEXPLAIN ANALYZE SELECT * FROM users WHERE email = 'test@example.com';\n\n-- Создаем индекс\nCREATE INDEX idx_users_email ON users(email);\n\n-- После индекса\nEXPLAIN ANALYZE SELECT * FROM users WHERE email = 'test@example.com';\n```"
+    },
+    {
+      "question": "Что такое транзакции и каковы их свойства (ACID)?",
+      "options": [
+        "A: Группа операций с свойствами Atomicity, Consistency, Isolation, Durability",
+        "B: Способ создания резервных копий БД",
+        "C: Метод индексации таблиц для ускорения запросов",
+        "D: Процедура репликации данных между серверами"
+      ],
+      "correct_answer": "A",
+      "detailed_answer": "Транзакции - это группа операций, выполняемых как единое целое с гарантиями ACID.\n\n*Свойства ACID:*\n\n*Atomicity (Атомарность)* - все операции выполняются или ни одна\n```sql\nBEGIN;\nUPDATE accounts SET balance = balance - 100 WHERE id = 1;\nUPDATE accounts SET balance = balance + 100 WHERE id = 2;\nCOMMIT; -- или ROLLBACK при ошибке\n```\n\n*Consistency (Согласованность)* - БД переходит из одного валидного состояния в другое\n\n*Isolation (Изолированность)* - транзакции не мешают друг другу\n*Уровни изоляции в PostgreSQL:*\n- Read Committed (по умолчанию)\n- Repeatable Read\n- Serializable\n\n*Durability (Долговечность)* - подтвержденные изменения сохраняются после сбоев"
+    },
+    {
+      "question": "Какая разница между VARCHAR и TEXT в PostgreSQL?",
+      "options": [
+        "A: VARCHAR имеет ограничение длины, TEXT - нет",
+        "B: TEXT только для больших текстов, VARCHAR для маленьких",
+        "C: VARCHAR быстрее для поиска, TEXT для хранения",
+        "D: Никакой разницы, оба типа идентичны"
+      ],
+      "correct_answer": "A",
+      "detailed_answer": "Разница между VARCHAR и TEXT в PostgreSQL:\n\n*VARCHAR(n)* - строка переменной длины с ограничением\n```sql\nCREATE TABLE users (\n    name VARCHAR(50)  -- максимум 50 символов\n);\n```\n\n*TEXT* - строка переменной длины без ограничения\n```sql\nCREATE TABLE posts (\n    content TEXT  -- без ограничения длины\n);\n```\n\n*Рекомендации:*\n• Используйте TEXT для произвольных строк\n• VARCHAR когда нужны строгие ограничения\n• Производительность практически идентична\n\n*Пример сравнения:*\n```sql\n-- VARCHAR выдаст ошибку при превышении\nINSERT INTO users (name) VALUES ('Очень длинное имя которое превышает лимит в 50 символов');\n\n-- TEXT примет любую длину\nINSERT INTO posts (content) VALUES ('Очень длинный текст...');\n```"
+    },
+    {
+      "question": "Что такое индексы в PostgreSQL и какие типы индексов вы знаете?",
+      "options": [
+        "A: Структуры для ускорения поиска, типы: B-tree, Hash, GiST, GIN",
+        "B: Резервные копии таблиц для восстановления",
+        "C: Методы шифрования данных в таблицах",
+        "D: Системные таблицы для хранения метаданных"
+      ],
+      "correct_answer": "A",
+      "detailed_answer": "Индексы - структуры данных для ускорения операций поиска в таблицах.\n\n*Основные типы индексов:*\n\n*B-tree* - стандартный индекс для сравнений и сортировок\n```sql\nCREATE INDEX idx_users_email ON users(email);\n```\n\n*Hash* - для точных сравнений (=)\n```sql\nCREATE INDEX idx_users_id_hash ON users USING HASH(id);\n```\n\n*GiST* - для сложных данных (геоданные, полнотекстовый поиск)\n```sql\nCREATE INDEX idx_posts_content_gist ON posts USING GIST(to_tsvector('english', content));\n```\n\n*GIN* - для составных значений (массивы, JSON)\n```sql\nCREATE INDEX idx_products_tags_gin ON products USING GIN(tags);\n```\n\n*BRIN* - для очень больших таблиц с естественной сортировкой\n```sql\nCREATE INDEX idx_sensor_data_brin ON sensor_data USING BRIN(timestamp);\n```"
+    }
+  ]
+}
