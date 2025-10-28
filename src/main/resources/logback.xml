@@ -19,7 +19,7 @@
         <appender-ref ref="STDOUT"/>
     </root>
 
-<!--    <logger name="com.mar" level="WARN">-->
-<!--        <append-ref ref="STDOUT"/>-->
-<!--    </logger>-->
+    <logger name="org.hibernate" level="WARN">
+        <append-ref ref="STDOUT"/>
+    </logger>
 </configuration>

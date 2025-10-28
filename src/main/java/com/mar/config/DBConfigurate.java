@@ -1,6 +1,7 @@
 package com.mar.config;
 
 import com.mar.model.LastUserMsg;
+import jakarta.persistence.EntityManager;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
@@ -12,7 +13,26 @@ import org.hibernate.service.ServiceRegistry;
 @UtilityClass
 public class DBConfigurate {
 
-    public static SessionFactory buildSessionFactory() {
+    private static SessionFactory sessionFactory;
+    private static EntityManager entityManager;
+
+    public static EntityManager getEntityManager() {
+        synchronized (DBConfigurate.class) {
+            if (entityManager == null) {
+                entityManager = getSessionFactory().createEntityManager();
+            }
+            return entityManager;
+        }
+    }
+
+    private static SessionFactory getSessionFactory() {
+        if (sessionFactory == null) {
+            initSessionFactory();
+        }
+        return sessionFactory;
+    }
+
+    private void initSessionFactory() {
         try {
             Configuration configuration = new Configuration();
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
@@ -20,7 +40,7 @@ public class DBConfigurate {
 
             configuration.addAnnotatedClass(LastUserMsg.class);
 
-            return configuration.buildSessionFactory(serviceRegistry);
+            sessionFactory = configuration.buildSessionFactory(serviceRegistry);
         } catch (Exception e) {
             log.error("Cannot create Session factory for H2.", e);
             throw new RuntimeException("There is issue in hibernate util");

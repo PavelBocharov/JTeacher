@@ -7,9 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -50,6 +53,21 @@ public class JSONLibraryService implements LibraryService {
                         Question question = questions.getQuestions().get(i);
                         question.setId(id);
                         question.setPosition((long) i);
+                        // Перетасовать варианты ответа
+                        Character correctAnswer = question.getCorrectAnswer().charAt(0);
+                        List<String> shaffleAnswers = question.getOptions();
+                        ArrayList<String> newOptions = new ArrayList<>(4);
+                        Collections.shuffle(shaffleAnswers);
+                        for (int a = 0; a < shaffleAnswers.size(); a++) {
+                            Character newPrefix = (char) ('A' + a);
+                            String answer = shaffleAnswers.get(a);
+                            if (correctAnswer.equals(answer.charAt(0))) {
+                                question.setCorrectAnswer(String.valueOf(newPrefix));
+                            }
+                            newOptions.add(a, newPrefix + answer.substring(1));
+                        }
+                        question.setOptions(newOptions);
+                        // -------------
                         questionsByType.put(id, question);
                     }
                     library.put(type, questionsByType);
@@ -61,6 +79,7 @@ public class JSONLibraryService implements LibraryService {
             }
         }
     }
+
 
     private Map<String, Question> getQuestions(String type) {
         Map<String, Question> questions = library.get(type);
