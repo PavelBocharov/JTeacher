@@ -2,7 +2,7 @@ package com.mar.service;
 
 import com.mar.annotation.CallbackButtonType;
 import com.mar.annotation.CallbackMethod;
-import com.mar.data.Question;
+import com.mar.data.QuestionInfo;
 import com.mar.data.UserMsg;
 import com.mar.model.LastUserMsg;
 import com.mar.service.db.DatabaseService;
@@ -147,17 +147,21 @@ public class BotService {
                 startImagePath,
                 "\uD83E\uDDD1\u200D\uD83D\uDCBB Выбери подготовленные тесты.",
                 new InlineKeyboardMarkup()
-                        .addRow(new InlineKeyboardButton(CALLBACK_JAVA.getText()).callbackData(CALLBACK_JAVA.getType()))
-                        .addRow(new InlineKeyboardButton(CALLBACK_SQL.getText()).callbackData(CALLBACK_SQL.getType()))
-                        .addRow(new InlineKeyboardButton(CALLBACK_PYTHON.getText()).callbackData(CALLBACK_PYTHON.getType())),
+                        .addRow(new InlineKeyboardButton(getButtonText(CALLBACK_JAVA)).callbackData(CALLBACK_JAVA.getType()))
+                        .addRow(new InlineKeyboardButton(getButtonText(CALLBACK_SQL)).callbackData(CALLBACK_SQL.getType()))
+                        .addRow(new InlineKeyboardButton(getButtonText(CALLBACK_PYTHON)).callbackData(CALLBACK_PYTHON.getType())),
                 (request, response) -> workWithResponse(userMsg, request, response)
         );
+    }
+
+    private String getButtonText(CallbackButtonType type) {
+        return String.format("%s [%d вопросов]", type.getText(), libraryService.getTypeInfo(type.getType()).getQuestions().size());
     }
 
     @CallbackMethod({CALLBACK_JAVA, CALLBACK_PYTHON, CALLBACK_SQL, CALLBACK_CLOUD, CALLBACK_ALL})
     private void sendRandomQuestionByType(UserMsg userMsg) {
         CallbackButtonType callbackType = CallbackButtonType.findByType(userMsg.getText());
-        Question question = libraryService.getRandomByType(callbackType.getType());
+        QuestionInfo question = libraryService.getRandomByType(callbackType.getType());
         log.trace("Find random question by type: '{}', Question: {}", callbackType, question);
         if (question == null) {
             SendMessage msg = new SendMessage(userMsg.getChatId().longValue(), "Для данного типа не нашлось вопросов.")
@@ -188,7 +192,7 @@ public class BotService {
     private void checkAnswer(UserMsg userMsg) {
         String[] tokens = userMsg.getText().split("~");
         log.trace("Answer tokens: {}", Arrays.toString(tokens));
-        Question question = libraryService.getById(tokens[1], tokens[2]);
+        QuestionInfo question = libraryService.getById(tokens[1], tokens[2]);
         SendMessage msg;
         if (question.getCorrectAnswer().equalsIgnoreCase(tokens[3])) {
             msg = new SendMessage(userMsg.getChatId().longValue(), "✅ Все правильно");
@@ -211,7 +215,7 @@ public class BotService {
     private void sendDetailAnswer(UserMsg userMsg) {
         String[] tokens = userMsg.getText().split("~");
         log.trace("Detail answer tokens: {}", Arrays.toString(tokens));
-        Question question = libraryService.getById(tokens[1], tokens[2]);
+        QuestionInfo question = libraryService.getById(tokens[1], tokens[2]);
         SendMessage msg = new SendMessage(userMsg.getChatId().longValue(), question.getDetailedAnswer())
                 .replyMarkup(
                         new InlineKeyboardMarkup()

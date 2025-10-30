@@ -1,25 +1,28 @@
 package com.mar.service.library;
 
-import com.mar.data.Question;
+import com.mar.annotation.CallbackButtonType;
+import com.mar.data.QuestionInfo;
 import com.mar.data.Questions;
+import com.mar.model.Question;
+import com.mar.model.Type;
+import com.mar.utils.BotUtils;
 import com.mar.utils.JsonUtility;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 @Slf4j
 public class JSONLibraryService implements LibraryService {
 
-    private final Map<String, Map<String, Question>> library = new HashMap<>();
+    @Getter
+    private final Map<String, Map<String, QuestionInfo>> library = new HashMap<>();
 
     private final String rootDir;
 
@@ -47,26 +50,14 @@ public class JSONLibraryService implements LibraryService {
                 try {
                     Questions questions = JsonUtility.get(FileUtils.readFileToString(file, "UTF-8"), Questions.class);
                     String type = questions.getType();
-                    Map<String, Question> questionsByType = new HashMap<>(questions.getQuestions().size());
+                    Map<String, QuestionInfo> questionsByType = new HashMap<>(questions.getQuestions().size());
                     for (int i = 0; i < questions.getQuestions().size(); i++) {
                         String id = String.valueOf(i);
-                        Question question = questions.getQuestions().get(i);
+                        QuestionInfo question = questions.getQuestions().get(i);
                         question.setId(id);
                         question.setPosition((long) i);
                         // Перетасовать варианты ответа
-                        Character correctAnswer = question.getCorrectAnswer().charAt(0);
-                        List<String> shaffleAnswers = question.getOptions();
-                        ArrayList<String> newOptions = new ArrayList<>(4);
-                        Collections.shuffle(shaffleAnswers);
-                        for (int a = 0; a < shaffleAnswers.size(); a++) {
-                            Character newPrefix = (char) ('A' + a);
-                            String answer = shaffleAnswers.get(a);
-                            if (correctAnswer.equals(answer.charAt(0))) {
-                                question.setCorrectAnswer(String.valueOf(newPrefix));
-                            }
-                            newOptions.add(a, newPrefix + answer.substring(1));
-                        }
-                        question.setOptions(newOptions);
+                        BotUtils.shaffleOptions(question);
                         // -------------
                         questionsByType.put(id, question);
                     }
@@ -81,8 +72,8 @@ public class JSONLibraryService implements LibraryService {
     }
 
 
-    private Map<String, Question> getQuestions(String type) {
-        Map<String, Question> questions = library.get(type);
+    private Map<String, QuestionInfo> getQuestions(String type) {
+        Map<String, QuestionInfo> questions = library.get(type);
         if (questions == null || questions.isEmpty()) {
             log.warn("Questions by type = '{}' is empty or null.", type);
             return null;
@@ -91,8 +82,8 @@ public class JSONLibraryService implements LibraryService {
     }
 
     @Override
-    public Question getRandomByType(String type) {
-        Map<String, Question> questions = getQuestions(type);
+    public QuestionInfo getRandomByType(String type) {
+        Map<String, QuestionInfo> questions = getQuestions(type);
         if (questions == null) {
             return null;
         }
@@ -100,13 +91,13 @@ public class JSONLibraryService implements LibraryService {
     }
 
     @Override
-    public Question getById(String type, String id) {
-        Map<String, Question> questions = getQuestions(type);
+    public QuestionInfo getById(String type, String id) {
+        Map<String, QuestionInfo> questions = getQuestions(type);
         if (questions == null) {
             log.warn("Cannot find library by type = {}", type);
             return null;
         }
-        Question question = questions.get(id);
+        QuestionInfo question = questions.get(id);
         if (question != null) {
             return question;
         }
@@ -115,11 +106,22 @@ public class JSONLibraryService implements LibraryService {
     }
 
     @Override
-    public Question getNext(String type, Long position) {
-        Map<String, Question> questions = getQuestions(type);
+    public QuestionInfo getNext(String type, Long position) {
+        Map<String, QuestionInfo> questions = getQuestions(type);
 
         return questions.values().parallelStream()
                 .filter(question -> question.getPosition() <= position)
-                .min(Comparator.comparing(Question::getPosition)).orElse(null);
+                .min(Comparator.comparing(QuestionInfo::getPosition)).orElse(null);
+    }
+
+    @Override
+    public Type getTypeInfo(String type) {
+        return Type.builder()
+                .title(type)
+                .description(CallbackButtonType.findByType(type).getText())
+                .questions(library.get(type).values().parallelStream()
+                        .map(questionInfo -> Question.builder().position(questionInfo.getPosition()).build())
+                        .toList())
+                .build();
     }
 }

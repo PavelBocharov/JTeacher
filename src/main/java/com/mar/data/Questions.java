@@ -1,13 +1,13 @@
 package com.mar.data;
 
-import java.io.Serializable;
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.io.Serializable;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,6 +17,8 @@ import lombok.ToString;
 public class Questions implements Serializable {
 
     private String type;
-    private List<Question> questions;
+    private String description;
+    private Long version;
+    private List<QuestionInfo> questions;
 
 }

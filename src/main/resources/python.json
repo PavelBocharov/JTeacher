@@ -1,6 +1,7 @@
 {
   "type": "/python",
   "description": "Тест по Python для разработчиков",
+  "version": "202510301216",
   "questions": [
     {
       "question": "Что такое списковые включения (list comprehensions) и как они работают?",

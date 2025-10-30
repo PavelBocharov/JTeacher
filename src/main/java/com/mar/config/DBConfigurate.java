@@ -1,6 +1,8 @@
 package com.mar.config;
 
 import com.mar.model.LastUserMsg;
+import com.mar.model.Question;
+import com.mar.model.Type;
 import jakarta.persistence.EntityManager;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -36,9 +38,12 @@ public class DBConfigurate {
         try {
             Configuration configuration = new Configuration();
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                    .applySettings(configuration.getProperties()).build();
+                    .applySettings(configuration.getProperties())
+                    .build();
 
-            configuration.addAnnotatedClass(LastUserMsg.class);
+            configuration.addAnnotatedClasses(
+                    LastUserMsg.class, Type.class, Question.class
+            );
 
             sessionFactory = configuration.buildSessionFactory(serviceRegistry);
         } catch (Exception e) {

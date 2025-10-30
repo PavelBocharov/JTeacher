@@ -15,7 +15,7 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Question implements Serializable {
+public class QuestionInfo implements Serializable {
 
     private String id;
     private Long position;

@@ -1,6 +1,7 @@
 {
   "type": "/sql",
   "description": "Тест по PostgreSQL для разработчиков",
+  "version": "202510301216",
   "questions": [
     {
       "question": "Что такое CTE (Common Table Expressions) и для чего они используются?",

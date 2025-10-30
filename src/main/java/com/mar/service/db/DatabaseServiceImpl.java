@@ -13,7 +13,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         return DBConfigurate.getEntityManager()
                 .createQuery("select lum from LastUserMsg lum where lum.userId = ?1", LastUserMsg.class)
                 .setParameter(1, userId)
-                .getSingleResult();
+                .getSingleResultOrNull();
     }
 
     @Override

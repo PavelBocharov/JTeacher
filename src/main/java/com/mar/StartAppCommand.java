@@ -2,18 +2,16 @@ package com.mar;
 
 import com.mar.service.BotService;
 import com.mar.service.db.DatabaseServiceImpl;
-import com.mar.service.library.JSONLibraryService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.mar.service.library.DBLibraryService;
+import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;
 
+@Slf4j
 @CommandLine.Command(
         name = "java -jar jteach.jar",
         description = "Telegram Bot teacher."
 )
 public class StartAppCommand implements Runnable {
-
-    private static final Logger log = LoggerFactory.getLogger(StartAppCommand.class);
 
     @CommandLine.Option(
             names = {"-BT", "--botToken"},
@@ -46,6 +44,7 @@ public class StartAppCommand implements Runnable {
 
     @Override
     public void run() {
-        new BotService(botToken, new JSONLibraryService(rootDir), new DatabaseServiceImpl(), startImage, baseImage);
+        new BotService(botToken, new DBLibraryService(rootDir), new DatabaseServiceImpl(), startImage, baseImage);
+//        new BotService(botToken, new JSONLibraryService(rootDir), new DatabaseServiceImpl(), startImage, baseImage);
     }
 }

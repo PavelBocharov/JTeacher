@@ -1,11 +1,13 @@
 package com.mar.service.library;
 
-import com.mar.data.Question;
+import com.mar.data.QuestionInfo;
+import com.mar.model.Type;
 
 public interface LibraryService {
 
-    Question getRandomByType(String type);
-    Question getById(String type, String id);
-    Question getNext(String type, Long position);
+    QuestionInfo getRandomByType(String type);
+    QuestionInfo getById(String type, String id);
+    QuestionInfo getNext(String type, Long position);
+    Type getTypeInfo(String type);
 
 }
