@@ -46,7 +46,7 @@ public class Question implements Serializable {
     private Long position;
 
     @ManyToOne
-    @JoinColumn(name="type_id", nullable=false)
+    @JoinColumn(name = "type_id", nullable = false)
     private Type type;
 
     @Override

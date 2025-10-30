@@ -44,13 +44,12 @@ import static java.util.Objects.nonNull;
 @Slf4j
 public class BotService {
 
+    private final Map<CallbackButtonType, Method> callbackMethods = new HashMap<>();
     private TelegramBot bot;
     private LibraryService libraryService;
     private DatabaseService databaseService;
     private String startImagePath;
     private String baseImagePath;
-
-    private final Map<CallbackButtonType, Method> callbackMethods = new HashMap<>();
 
     public BotService(String botToken, LibraryService libraryService, DatabaseService databaseService) {
         init(botToken, libraryService, databaseService, null, null);

@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Random;
 
 @Slf4j
+@Deprecated(forRemoval = true)
 public class JSONLibraryService implements LibraryService {
 
     @Getter

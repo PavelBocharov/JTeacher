@@ -9,25 +9,28 @@
    mvn clean install -U
    ```
 2) Create JSON files with questions - [EXAMPLE](src/main/resources/java.json). File formate:
-   ``` json 
-   {
-       "type": "/java | /sql | /python - ⚠️required⚠️ types (other in WIP)",
-       "description": "OPTIONAL",
-       "questions": [
-           {
-               "question": "QUESTION",
-               "options": [
-                   "A: A|B|C|D is FIRST word and is ⚠️required⚠️",
-                   "B: Q2",
-                   "C: Q3",
-                   "D: Q4"
-               ],
-               "correct_answer": "C",
-               "detailed_answer": "ANSWER"
-           }
-       ]
-   }
-   ```
+    ``` json 
+    {
+      "type": "/java | /sql | /python - ⚠️required⚠️ types (other in WIP)",
+      "description": "OPTIONAL",
+      "version": "202510301218",
+      "version_description": "YYYY-mm-DD HH:MM -> YYYYmmDDHHMM",
+      "questions": [
+        {
+          "question": "QUESTION",
+          "options": [
+            "A: A|B|C|D is FIRST word and is ⚠️required⚠️",
+            "B: Q2",
+            "C: Q3",
+            "D: Q4"
+          ],
+          "correct_answer": "C",
+          "detailed_answer": "ANSWER"
+        }
+      ]
+    }
+    ```
+
 3) Start `.jar` with params:
 
 | Param                   | Description                                          | Required | Example                                                  |
