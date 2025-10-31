@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Deprecated(forRemoval = true)
@@ -122,7 +123,7 @@ public class JSONLibraryService implements LibraryService {
                 .description(CallbackButtonType.findByType(type).getText())
                 .questions(library.get(type).values().parallelStream()
                         .map(questionInfo -> Question.builder().position(questionInfo.getPosition()).build())
-                        .toList())
+                        .collect(Collectors.toSet()))
                 .build();
     }
 }

@@ -54,3 +54,29 @@ java -jar ./target/jteach*.jar \
   --startImage='...' \
   --baseImage='...'
 ```
+
+### Docker 
+1) Build image
+   ``` sh 
+    docker build --no-cache -t marolok/jteach:1.0.0 .
+   ```
+2) Push image
+   ``` sh 
+    docker push marolok/jteach:1.0.0
+   ```
+3) Set ENV in [docker-compose.yml](./docker-compose.yml)
+   ``` yml 
+   version: '3'
+   name: jteach
+   services:
+   jteach:
+     image: marolok/jteach:1.0.0
+     container_name: jteach
+     environment:
+       - BOT_TOKEN=1111111111:222_333333333_444444444444444444-99
+       - START_IMG=/opt/app/jteach/img/start.jpg - if in your dir images in `img` folder
+       - BASE_IMG=/opt/app/jteach/img/base.jpg - if in your dir images in `img` folder
+     volumes:
+       - "your/dir/with/json/files/and/imgs:/opt/app/jteach"
+   ```
+4) 

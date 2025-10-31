@@ -41,9 +41,17 @@ public class StartAppCommand implements Runnable {
     )
     private String baseImage;
 
+    public static final String ROOT_DIR = "root_dir_for_mount";
 
     @Override
     public void run() {
+        log.debug("Bot token: {}", botToken.substring(0, 11) + "******************************" + botToken.substring(40));
+        log.debug("Root dir: {}", rootDir);
+        log.debug("Start image: {}", startImage);
+        log.debug("Base image: {}", baseImage);
+
+        System.setProperty(ROOT_DIR, rootDir);
+
         new BotService(botToken, new DBLibraryService(rootDir), new DatabaseServiceImpl(), startImage, baseImage);
 //        new BotService(botToken, new JSONLibraryService(rootDir), new DatabaseServiceImpl(), startImage, baseImage);
     }

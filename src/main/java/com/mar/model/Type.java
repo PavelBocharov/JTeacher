@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -36,7 +36,7 @@ public class Type implements Serializable {
     private Long version;
 
     @OneToMany(mappedBy = "type")
-    private List<Question> questions;
+    private Set<Question> questions;
 
     @Override
     public String toString() {

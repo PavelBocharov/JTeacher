@@ -1,5 +1,6 @@
 package com.mar.config;
 
+import com.mar.StartAppCommand;
 import com.mar.model.LastUserMsg;
 import com.mar.model.Question;
 import com.mar.model.Type;
@@ -35,10 +36,14 @@ public class DBConfigurate {
     }
 
     private void initSessionFactory() {
+        String rootDir = System.getProperty(StartAppCommand.ROOT_DIR);
+        String dbFile =  rootDir.endsWith("/") ? rootDir + "h2" : rootDir + "/h2";
+        log.debug("DataBase file: {}", dbFile);
         try {
             Configuration configuration = new Configuration();
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                     .applySettings(configuration.getProperties())
+                    .applySetting("hibernate.connection.url", "jdbc:h2:file:" + dbFile)
                     .build();
 
             configuration.addAnnotatedClasses(

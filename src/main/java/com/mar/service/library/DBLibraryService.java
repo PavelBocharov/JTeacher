@@ -58,6 +58,7 @@ public class DBLibraryService implements LibraryService {
                                 .build();
                     }
                     type.setVersion(questions.getVersion());
+                    log.debug("INIT DB - type {}", type);
 
                     Set<Question> questionArrayList;
                     if (type.getId() != null) {
@@ -93,6 +94,7 @@ public class DBLibraryService implements LibraryService {
                         log.debug("Add questions: {}", questionArrayList.size());
                     }
 
+                    type.setQuestions(questionArrayList);
                     em.getTransaction().begin();
                     em.persist(type);
                     for (Question q : questionArrayList) {
@@ -136,7 +138,9 @@ public class DBLibraryService implements LibraryService {
 
     @Override
     public Type getTypeInfo(String type) {
-        return em.createQuery("SELECT t FROM Type t where t.title=?1", Type.class).setParameter(1, type).getSingleResult();
+        Type t = em.createQuery("SELECT t FROM Type t where t.title=?1", Type.class).setParameter(1, type).getSingleResult();
+        log.debug("Get type by title = '{}'. Type: {}", type , t);
+        return t;
     }
 
     private QuestionInfo map(Question q) {

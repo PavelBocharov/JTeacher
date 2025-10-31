@@ -1,0 +1,15 @@
+version: '3'
+name: jteach
+services:
+  jteach:
+    image: marolok/jteach:1.0.0
+#    build: .
+    container_name: jteach
+    environment:
+      - BOT_TOKEN=1111111111:222_333333333_444444444444444444-99
+      - START_IMG=/opt/app/jteach/img/start.jpg
+      - BASE_IMG=/opt/app/jteach/img/base.jpg
+    volumes:
+      - "your/dir/with/json/files/and/imgs:/opt/app/jteach"
+    tty: true
+    restart: always

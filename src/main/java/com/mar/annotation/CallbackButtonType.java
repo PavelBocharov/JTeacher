@@ -9,10 +9,10 @@ import java.util.Arrays;
 @AllArgsConstructor
 public enum CallbackButtonType {
     CALLBACK_START("/start", "START"),
-    CALLBACK_JAVA("/java", "☕\uFE0F Java/Spring"),
+    CALLBACK_JAVA("/java", "☕ Java/Spring"),
     CALLBACK_SQL("/sql", "\uD83D\uDDC4 SQL"),
     CALLBACK_PYTHON("/python", "\uD83D\uDC0D Python"),
-    CALLBACK_CLOUD("/cloud", "☁\uFE0F Cloud (Docker, MQ, Kuber, etc.)"),
+    CALLBACK_CLOUD("/cloud", "☁ Cloud (Docker, MQ, Kuber, etc.)"),
     CALLBACK_ALL("/all", "ALL"),
     CALLBACK_ANSWER("/answer", "Генерируется в рантайме."),
     CALLBACK_DETAIL_ANSWER("/detail_answer", "\uD83D\uDCAC Подробный ответ.");
