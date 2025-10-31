@@ -37,7 +37,7 @@ public class DBConfigurate {
 
     private void initSessionFactory() {
         String rootDir = System.getProperty(StartAppCommand.ROOT_DIR);
-        String dbFile =  rootDir.endsWith("/") ? rootDir + "h2" : rootDir + "/h2";
+        String dbFile = rootDir.endsWith("/") ? rootDir + "h2" : rootDir + "/h2";
         log.debug("DataBase file: {}", dbFile);
         try {
             Configuration configuration = new Configuration();

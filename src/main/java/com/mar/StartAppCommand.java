@@ -13,35 +13,31 @@ import picocli.CommandLine;
 )
 public class StartAppCommand implements Runnable {
 
+    public static final String ROOT_DIR = "root_dir_for_mount";
     @CommandLine.Option(
             names = {"-BT", "--botToken"},
             description = "Bot token from @BotFather. Example: '123456789:AAAA-abcdabcdabcdabcdabcdabcdabcdabcdabcdabc'.",
             required = true
     )
     private String botToken;
-
     @CommandLine.Option(
             names = {"-D", "--dir"},
             description = "Dir path to JSON-files with Q&A. Example: 'g/temp/to/gif/files/'",
             required = true
     )
     private String rootDir;
-
     @CommandLine.Option(
             names = {"-SI", "--startImage"},
             description = "Path to welcome image. Example: 'g/temp/to/gif/files/start.png'",
             required = false
     )
     private String startImage;
-
     @CommandLine.Option(
             names = {"-BI", "--baseImage"},
             description = "Path to default image. Example: 'g/temp/to/gif/files/base.png'",
             required = false
     )
     private String baseImage;
-
-    public static final String ROOT_DIR = "root_dir_for_mount";
 
     @Override
     public void run() {

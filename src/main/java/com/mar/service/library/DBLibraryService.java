@@ -48,7 +48,7 @@ public class DBLibraryService implements LibraryService {
 
                     log.debug("Get type by title: {}. Type - {}", questions.getType(), type);
                     if (type != null && type.getVersion() >= questions.getVersion()) {
-                        break;
+                        continue;
                     }
 
                     if (type == null) {
@@ -139,7 +139,7 @@ public class DBLibraryService implements LibraryService {
     @Override
     public Type getTypeInfo(String type) {
         Type t = em.createQuery("SELECT t FROM Type t where t.title=?1", Type.class).setParameter(1, type).getSingleResult();
-        log.debug("Get type by title = '{}'. Type: {}", type , t);
+        log.debug("Get type by title = '{}'. Type: {}", type, t);
         return t;
     }
 
