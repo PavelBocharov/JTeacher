@@ -46,7 +46,7 @@ public class DBLibraryService implements LibraryService {
                             .setParameter(1, questions.getType())
                             .getSingleResultOrNull();
 
-                    log.debug("Get type by title: {}. Type - {}", questions.getType(), type);
+                    log.debug("INIT: Get type by title: {}. Type - {}", questions.getType(), type);
                     if (type != null && type.getVersion() >= questions.getVersion()) {
                         continue;
                     }
@@ -58,7 +58,7 @@ public class DBLibraryService implements LibraryService {
                                 .build();
                     }
                     type.setVersion(questions.getVersion());
-                    log.debug("INIT DB - type {}", type);
+                    log.debug("INIT: DB - type {}", type);
 
                     Set<Question> questionArrayList;
                     if (type.getId() != null) {
@@ -67,7 +67,7 @@ public class DBLibraryService implements LibraryService {
                                         .setParameter(1, type)
                                         .getResultList()
                         );
-                        log.debug("Get set questions: {}", questionsText.size());
+                        log.debug("INIT: Get set questions: {}", questionsText.size());
                         questionArrayList = questions.getQuestions().parallelStream()
                                 .filter(q -> !questionsText.contains(q.getQuestion()))
                                 .map(BotUtils::shaffleOptions)
@@ -80,7 +80,8 @@ public class DBLibraryService implements LibraryService {
                                                 .build()
                                 )
                                 .collect(Collectors.toSet());
-                        log.debug("Add new questions: {}", questionArrayList.size());
+                        log.debug("INIT: Add new questions: {}", questionArrayList.size());
+                        questionArrayList.addAll(type.getQuestions());
                     } else {
                         questionArrayList = questions.getQuestions().parallelStream()
                                 .map(BotUtils::shaffleOptions)
@@ -91,15 +92,17 @@ public class DBLibraryService implements LibraryService {
                                         .detailedAnswer(q.getDetailedAnswer())
                                         .build()
                                 ).collect(Collectors.toSet());
-                        log.debug("Add questions: {}", questionArrayList.size());
+                        log.debug("INIT: Add questions: {}", questionArrayList.size());
                     }
 
                     type.setQuestions(questionArrayList);
                     em.getTransaction().begin();
                     em.persist(type);
                     for (Question q : questionArrayList) {
-                        q.setType(type);
-                        em.persist(q);
+                        if (q.getId() == null) {
+                            q.setType(type);
+                            em.persist(q);
+                        }
                     }
                     em.getTransaction().commit();
                 } catch (Exception e) {
@@ -138,7 +141,7 @@ public class DBLibraryService implements LibraryService {
 
     @Override
     public Type getTypeInfo(String type) {
-        Type t = em.createQuery("SELECT t FROM Type t where t.title=?1", Type.class).setParameter(1, type).getSingleResult();
+        Type t = em.createQuery("SELECT t FROM Type t where t.title=?1", Type.class).setParameter(1, type).getSingleResultOrNull();
         log.debug("Get type by title = '{}'. Type: {}", type, t);
         return t;
     }

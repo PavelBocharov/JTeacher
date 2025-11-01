@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.mar.annotation.CallbackButtonType.CALLBACK_ALL;
 import static com.mar.annotation.CallbackButtonType.CALLBACK_ANSWER;
@@ -140,21 +141,33 @@ public class BotService {
 
     @CallbackMethod(CALLBACK_START)
     private void startAction(UserMsg userMsg) {
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        Stream.of(CALLBACK_JAVA, CALLBACK_PYTHON, CALLBACK_SQL, CALLBACK_CLOUD, CALLBACK_ALL).forEachOrdered(
+                type -> {
+                    String title = getButtonText(type);
+                    if (title != null) {
+                        markup.addRow(new InlineKeyboardButton(title).callbackData(type.getType()));
+                    }
+                }
+        );
+
         BotUtils.sendPhoto(
                 bot,
                 userMsg.getChatId(),
                 startImagePath,
                 "\uD83E\uDDD1\u200D\uD83D\uDCBB Выбери подготовленные тесты.",
-                new InlineKeyboardMarkup()
-                        .addRow(new InlineKeyboardButton(getButtonText(CALLBACK_JAVA)).callbackData(CALLBACK_JAVA.getType()))
-                        .addRow(new InlineKeyboardButton(getButtonText(CALLBACK_SQL)).callbackData(CALLBACK_SQL.getType()))
-                        .addRow(new InlineKeyboardButton(getButtonText(CALLBACK_PYTHON)).callbackData(CALLBACK_PYTHON.getType())),
+                markup,
                 (request, response) -> workWithResponse(userMsg, request, response)
         );
     }
 
     private String getButtonText(CallbackButtonType type) {
-        return String.format("%s [%d вопросов]", type.getText(), libraryService.getTypeInfo(type.getType()).getQuestions().size());
+        try {
+            return String.format("%s [%d вопросов]", type.getText(), libraryService.getTypeInfo(type.getType()).getQuestions().size());
+        } catch (Exception e) {
+            log.warn("Cannot create title '{}' for button - {}", type, e.getMessage());
+            return null;
+        }
     }
 
     @CallbackMethod({CALLBACK_JAVA, CALLBACK_PYTHON, CALLBACK_SQL, CALLBACK_CLOUD, CALLBACK_ALL})

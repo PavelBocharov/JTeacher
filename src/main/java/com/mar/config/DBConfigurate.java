@@ -11,6 +11,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
+import org.sqlite.SQLiteDataSource;
 
 @Slf4j
 @UtilityClass
@@ -37,13 +38,14 @@ public class DBConfigurate {
 
     private void initSessionFactory() {
         String rootDir = System.getProperty(StartAppCommand.ROOT_DIR);
-        String dbFile = rootDir.endsWith("/") ? rootDir + "h2" : rootDir + "/h2";
+        String dbFile = rootDir.endsWith("/") ? rootDir + "library.db" : rootDir + "/library.db";
         log.debug("DataBase file: {}", dbFile);
         try {
             Configuration configuration = new Configuration();
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                     .applySettings(configuration.getProperties())
-                    .applySetting("hibernate.connection.url", "jdbc:h2:file:" + dbFile)
+                    .applySetting("hibernate.connection.url", "jdbc:sqlite:" + dbFile)
+                    .applySetting("type", SQLiteDataSource.class)
                     .build();
 
             configuration.addAnnotatedClasses(

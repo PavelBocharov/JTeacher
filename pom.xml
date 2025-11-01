@@ -6,7 +6,7 @@
 
     <groupId>com.mar</groupId>
     <artifactId>jteach</artifactId>
-    <version>1.0.2</version>
+    <version>1.1.0</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -15,7 +15,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <telegram.bot.api.version>9.2.0</telegram.bot.api.version>
         <hibernate.version>7.1.4.Final</hibernate.version>
-        <h2.version>2.4.240</h2.version>
+        <sqlite.version>3.50.3.0</sqlite.version>
+        <dialect.version>7.1.5.Final</dialect.version>
         <picocli.version>4.7.7</picocli.version>
         <jackson.version>3.0.1</jackson.version>
         <commons.io.version>2.20.0</commons.io.version>
@@ -41,9 +42,14 @@
             <version>${hibernate.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>${h2.version}</version>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>${sqlite.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-community-dialects</artifactId>
+            <version>${dialect.version}</version>
         </dependency>
 
         <dependency>
