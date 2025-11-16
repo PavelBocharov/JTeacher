@@ -21,15 +21,10 @@ public class DBConfigurate {
     private static EntityManager entityManager;
 
     public static EntityManager getEntityManager() {
-        synchronized (DBConfigurate.class) {
-            if (entityManager == null) {
-                entityManager = getSessionFactory().createEntityManager();
-            }
-            return entityManager;
-        }
+        return getSessionFactory().createEntityManager();
     }
 
-    private static SessionFactory getSessionFactory() {
+    private synchronized static SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
             initSessionFactory();
         }

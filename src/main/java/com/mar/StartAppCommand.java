@@ -47,8 +47,9 @@ public class StartAppCommand implements Runnable {
         log.debug("Base image: {}", baseImage);
 
         System.setProperty(ROOT_DIR, rootDir);
-
-        new BotService(botToken, new DBLibraryService(rootDir), new DatabaseServiceImpl(), startImage, baseImage);
+        DBLibraryService dbLibraryService = new DBLibraryService(rootDir);
+        log.debug("LibraryService init: {}", dbLibraryService);
+        new BotService(botToken, dbLibraryService, new DatabaseServiceImpl(), startImage, baseImage);
 //        new BotService(botToken, new JSONLibraryService(rootDir), new DatabaseServiceImpl(), startImage, baseImage);
     }
 }

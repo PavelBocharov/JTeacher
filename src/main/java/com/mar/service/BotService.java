@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.mar.annotation.CallbackButtonType.CALLBACK_ALL;
 import static com.mar.annotation.CallbackButtonType.CALLBACK_ANSWER;
 import static com.mar.annotation.CallbackButtonType.CALLBACK_CLOUD;
 import static com.mar.annotation.CallbackButtonType.CALLBACK_DETAIL_ANSWER;
@@ -113,8 +112,9 @@ public class BotService {
             return;
         }
 
-        LastUserMsg lum;
-        if ((lum = databaseService.getByUserId(userMsg.getId())) != null) {
+        LastUserMsg lum = databaseService.getByUserId(userMsg.getId());
+        log.debug("Get last user({}) msg: {}", userMsg.getId(), lum);
+        if (lum != null) {
             bot.execute(new DeleteMessage(userMsg.getChatId(), lum.getLastMsgId()));
             databaseService.delete(lum);
         }
@@ -142,7 +142,7 @@ public class BotService {
     @CallbackMethod(CALLBACK_START)
     private void startAction(UserMsg userMsg) {
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-        Stream.of(CALLBACK_JAVA, CALLBACK_PYTHON, CALLBACK_SQL, CALLBACK_CLOUD, CALLBACK_ALL).forEachOrdered(
+        Stream.of(CALLBACK_JAVA, CALLBACK_PYTHON, CALLBACK_SQL, CALLBACK_CLOUD).forEachOrdered(
                 type -> {
                     String title = getButtonText(type);
                     if (title != null) {
@@ -170,7 +170,7 @@ public class BotService {
         }
     }
 
-    @CallbackMethod({CALLBACK_JAVA, CALLBACK_PYTHON, CALLBACK_SQL, CALLBACK_CLOUD, CALLBACK_ALL})
+    @CallbackMethod({CALLBACK_JAVA, CALLBACK_PYTHON, CALLBACK_SQL, CALLBACK_CLOUD})
     private void sendRandomQuestionByType(UserMsg userMsg) {
         CallbackButtonType callbackType = CallbackButtonType.findByType(userMsg.getText());
         QuestionInfo question = libraryService.getRandomByType(callbackType.getType());

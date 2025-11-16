@@ -38,7 +38,6 @@ public class DBLibraryService implements LibraryService {
         for (File file : jsonFiles) {
             log.debug("Work with '{}' file. Exist: {}, Is file: {}", file, file.exists(), file.isFile());
             if (file.exists() && file.isFile()) {
-                EntityManager em = DBConfigurate.getEntityManager();
                 try {
                     Questions questions = JsonUtility.get(FileUtils.readFileToString(file, "UTF-8"), Questions.class);
 
@@ -106,6 +105,7 @@ public class DBLibraryService implements LibraryService {
                     }
                     em.getTransaction().commit();
                 } catch (Exception e) {
+                    log.error("Cannot init DB.", e);
                     em.getTransaction().rollback();
                     throw new RuntimeException(e);
                 }
