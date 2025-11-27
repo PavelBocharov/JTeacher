@@ -41,6 +41,20 @@ public class BotUtils {
         }
     }
 
+    public static void sendPhoto(TelegramBot bot, long chatId, byte[] img, String caption, InlineKeyboardMarkup buttons, BiConsumer<BaseRequest, SendResponse> workWithResponse) {
+        try {
+            if (img != null && img.length > 0) {
+                SendPhoto msg = new SendPhoto(chatId, img).caption(caption).replyMarkup(buttons);
+                sendPhoto(bot, msg, workWithResponse);
+            } else {
+                throw new Exception("Image byte array null or empty.");
+            }
+        } catch (Exception e) {
+            log.warn("Cannot find image byte[].", e);
+            sendMessage(bot, new SendMessage(chatId, caption).replyMarkup(buttons), workWithResponse);
+        }
+    }
+
     public static void sendPhoto(TelegramBot bot, SendPhoto msg, BiConsumer<BaseRequest, SendResponse> workWithResponse) {
         workWithResponse.accept(msg, bot.execute(msg));
     }

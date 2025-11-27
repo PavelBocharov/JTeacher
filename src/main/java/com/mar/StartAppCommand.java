@@ -1,6 +1,7 @@
 package com.mar;
 
 import com.mar.service.BotService;
+import com.mar.service.PeeAndPoopService;
 import com.mar.service.db.DatabaseServiceImpl;
 import com.mar.service.library.DBLibraryService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,24 +15,35 @@ import picocli.CommandLine;
 public class StartAppCommand implements Runnable {
 
     public static final String ROOT_DIR = "root_dir_for_mount";
+
     @CommandLine.Option(
             names = {"-BT", "--botToken"},
             description = "Bot token from @BotFather. Example: '123456789:AAAA-abcdabcdabcdabcdabcdabcdabcdabcdabcdabc'.",
             required = true
     )
     private String botToken;
+
+    @CommandLine.Option(
+            names = {"-BPT", "--botPaPToken"},
+            description = "Bot token from @BotFather. Example: '123456789:AAAA-abcdabcdabcdabcdabcdabcdabcdabcdabcdabc'.",
+            required = false
+    )
+    private String poopBot;
+
     @CommandLine.Option(
             names = {"-D", "--dir"},
             description = "Dir path to JSON-files with Q&A. Example: 'g/temp/to/gif/files/'",
             required = true
     )
-    private String rootDir;
+    private String rootDir = "./";
+
     @CommandLine.Option(
             names = {"-SI", "--startImage"},
             description = "Path to welcome image. Example: 'g/temp/to/gif/files/start.png'",
             required = false
     )
     private String startImage;
+
     @CommandLine.Option(
             names = {"-BI", "--baseImage"},
             description = "Path to default image. Example: 'g/temp/to/gif/files/base.png'",
@@ -44,12 +56,16 @@ public class StartAppCommand implements Runnable {
         log.debug("Bot token: {}", botToken.substring(0, 11) + "******************************" + botToken.substring(40));
         log.debug("Root dir: {}", rootDir);
         log.debug("Start image: {}", startImage);
-        log.debug("Base image: {}", baseImage);
 
         System.setProperty(ROOT_DIR, rootDir);
         DBLibraryService dbLibraryService = new DBLibraryService(rootDir);
         log.debug("LibraryService init: {}", dbLibraryService);
         new BotService(botToken, dbLibraryService, new DatabaseServiceImpl(), startImage, baseImage);
-//        new BotService(botToken, new JSONLibraryService(rootDir), new DatabaseServiceImpl(), startImage, baseImage);
+
+        if (poopBot != null && poopBot.length() == 46) {
+            log.debug("Pee&Poop bot token: {}", poopBot.substring(0, 11) + "******************************" + poopBot.substring(40));
+            new PeeAndPoopService(poopBot, new DatabaseServiceImpl());
+        }
+
     }
 }

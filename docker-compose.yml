@@ -2,11 +2,12 @@ version: '3'
 name: jteach
 services:
   jteach:
-    image: marolok/jteach:1.0.0
+    image: marolok/jteach:1.3.1
 #    build: .
     container_name: jteach
     environment:
       - BOT_TOKEN=1111111111:222_333333333_444444444444444444-99
+      - BOT_POOP_TOKEN=1111111111:222_333333333_444444444444444444-99
       - START_IMG=/opt/app/jteach/img/start.jpg
       - BASE_IMG=/opt/app/jteach/img/base.jpg
     volumes:

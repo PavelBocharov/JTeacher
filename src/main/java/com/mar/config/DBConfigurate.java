@@ -4,6 +4,7 @@ import com.mar.StartAppCommand;
 import com.mar.model.LastUserMsg;
 import com.mar.model.Question;
 import com.mar.model.Type;
+import com.mar.model.UserChart;
 import jakarta.persistence.EntityManager;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +45,7 @@ public class DBConfigurate {
                     .build();
 
             configuration.addAnnotatedClasses(
-                    LastUserMsg.class, Type.class, Question.class
+                    LastUserMsg.class, Type.class, Question.class, UserChart.class
             );
 
             sessionFactory = configuration.buildSessionFactory(serviceRegistry);
