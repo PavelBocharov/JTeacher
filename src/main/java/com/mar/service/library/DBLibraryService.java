@@ -14,6 +14,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -74,6 +75,8 @@ public class DBLibraryService implements LibraryService {
                                         q -> Question.builder()
                                                 .question(q.getQuestion())
                                                 .options(q.getOptions())
+                                                .answerImgPath(q.getAnswerImgPath())
+                                                .questionImgPath(q.getQuestionImgPath())
                                                 .correctAnswer(q.getCorrectAnswer())
                                                 .detailedAnswer(q.getDetailedAnswer())
                                                 .build()
@@ -87,6 +90,8 @@ public class DBLibraryService implements LibraryService {
                                 .map(q -> Question.builder()
                                         .question(q.getQuestion())
                                         .options(q.getOptions())
+                                        .answerImgPath(q.getAnswerImgPath())
+                                        .questionImgPath(q.getQuestionImgPath())
                                         .correctAnswer(q.getCorrectAnswer())
                                         .detailedAnswer(q.getDetailedAnswer())
                                         .build()
@@ -150,14 +155,16 @@ public class DBLibraryService implements LibraryService {
         if (q == null) {
             return null;
         }
-        return new QuestionInfo(
-                String.valueOf(q.getId()),
-                q.getId(),
-                q.getQuestion(),
-                q.getOptions(),
-                q.getCorrectAnswer(),
-                q.getDetailedAnswer()
-        );
+        return QuestionInfo.builder()
+                .id(String.valueOf(q.getId()))
+                .position(q.getId())
+                .question(q.getQuestion())
+                .answerImgPath(q.getAnswerImgPath())
+                .questionImgPath(q.getQuestionImgPath())
+                .options(List.copyOf(q.getOptions()))
+                .correctAnswer(q.getCorrectAnswer())
+                .detailedAnswer(q.getDetailedAnswer())
+                .build();
     }
 
 }

@@ -9,7 +9,7 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %level [%thread] [%logger{10}:%line]: %msg%n</pattern>
+            <pattern>%cyan(%d{HH:mm:ss.SSS}) %highlight(%-5level) %gray([%thread]) %magenta(%logger{10}:%line]): %msg%n</pattern>
         </encoder>
     </appender>
 

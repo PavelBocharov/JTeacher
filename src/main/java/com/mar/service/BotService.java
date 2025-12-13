@@ -22,6 +22,7 @@ import com.pengrad.telegrambot.response.SendResponse;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.mar.StartAppCommand.ROOT_DIR;
 import static com.mar.annotation.CallbackButtonType.CALLBACK_ANSWER;
 import static com.mar.annotation.CallbackButtonType.CALLBACK_CLOUD;
 import static com.mar.annotation.CallbackButtonType.CALLBACK_DETAIL_ANSWER;
@@ -193,9 +195,24 @@ public class BotService {
             );
             InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup(buttons.toArray(new InlineKeyboardButton[]{}));
 
+            if (question.getQuestionImgPath() != null) {
+                log.debug("Send img: {}...", question.getQuestionImgPath());
+                File img = new File(System.getProperty(ROOT_DIR), question.getQuestionImgPath());
+                log.debug("Send img file: {}...", img.getAbsolutePath());
+                if (img.exists() && img.isFile()) {
+                    BotUtils.sendPhoto(
+                            bot,
+                            userMsg.getChatId(),
+                            img.getAbsolutePath(),
+                            text.toString(),
+                            keyboard,
+                            (request, response) -> workWithResponse(userMsg, request, response)
+                    );
+                    return;
+                }
+            }
             SendMessage msg = new SendMessage(userMsg.getChatId().longValue(), text.toString())
                     .replyMarkup(keyboard);
-
             BotUtils.sendMessage(bot, msg, (request, response) -> workWithResponse(userMsg, request, response));
         }
     }
@@ -228,12 +245,29 @@ public class BotService {
         String[] tokens = userMsg.getText().split("~");
         log.trace("Detail answer tokens: {}", Arrays.toString(tokens));
         QuestionInfo question = libraryService.getById(tokens[1], tokens[2]);
-        SendMessage msg = new SendMessage(userMsg.getChatId().longValue(), question.getDetailedAnswer())
-                .replyMarkup(
-                        new InlineKeyboardMarkup()
-                                .addRow(new InlineKeyboardButton("➡️ Другой вопрос.").callbackData(tokens[1]))
-                                .addRow(new InlineKeyboardButton("\uD83D\uDCCB Вернуться к списку тем.").callbackData(CALLBACK_START.getType()))
+
+        InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup()
+                .addRow(new InlineKeyboardButton("➡️ Другой вопрос.").callbackData(tokens[1]))
+                .addRow(new InlineKeyboardButton("\uD83D\uDCCB Вернуться к списку тем.").callbackData(CALLBACK_START.getType()));
+
+        if (question.getAnswerImgPath() != null) {
+            log.debug("Send answer img: {}...", question.getAnswerImgPath());
+            File img = new File(System.getProperty(ROOT_DIR), question.getAnswerImgPath());
+            log.debug("Send answer img file: {}...", img.getAbsolutePath());
+            if (img.exists() && img.isFile()) {
+                BotUtils.sendPhoto(
+                        bot,
+                        userMsg.getChatId(),
+                        img.getAbsolutePath(),
+                        question.getDetailedAnswer(),
+                        keyboard,
+                        (request, response) -> workWithResponse(userMsg, request, response)
                 );
+                return;
+            }
+        }
+
+        SendMessage msg = new SendMessage(userMsg.getChatId().longValue(), question.getDetailedAnswer()).replyMarkup(keyboard);
         BotUtils.sendMessage(bot, msg, (request, response) -> workWithResponse(userMsg, request, response));
     }
 

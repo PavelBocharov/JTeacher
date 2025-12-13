@@ -37,6 +37,10 @@ public class Question implements Serializable {
     @Column(unique = true)
     private String question;
 
+    private String questionImgPath;
+
+    private String answerImgPath;
+
     private List<String> options;
 
     private String correctAnswer;

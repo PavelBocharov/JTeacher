@@ -14,6 +14,8 @@ import java.util.List;
 @Slf4j
 public class DatabaseServiceImpl implements DatabaseService {
 
+    public static final int MAX_COLUMN_CHART = 7;
+
     @Override
     public LastUserMsg getByUserId(Long userId) {
         try (EntityManager em = DBConfigurate.getEntityManager()) {
@@ -94,9 +96,11 @@ public class DatabaseServiceImpl implements DatabaseService {
                                     where userId = ?1
                                     group by date, data
                                     order by date desc
-                                    limit 14
+                                    limit ?2
                                     """
-                    ).setParameter(1, userId)
+                    )
+                    .setParameter(1, userId)
+                    .setParameter(2, MAX_COLUMN_CHART * 2) // pee + poop data
                     .getResultList();
 
             em.getTransaction().commit();
@@ -105,8 +109,8 @@ public class DatabaseServiceImpl implements DatabaseService {
         }
 
         LocalDate now = LocalDate.now();
-        int[] pee = new int[7];
-        int[] poop = new int[7];
+        int[] pee = new int[MAX_COLUMN_CHART];
+        int[] poop = new int[MAX_COLUMN_CHART];
         for (Object o : rez) {
             Object[] line = (Object[]) o;
             LocalDate date = (LocalDate) line[0];
@@ -114,10 +118,12 @@ public class DatabaseServiceImpl implements DatabaseService {
             Integer count = (Integer) line[2];
 
             int i = now.getDayOfYear() - date.getDayOfYear();
-            if (type == PeePoopEnum.PEE.ordinal()) {
-                pee[i] = count;
-            } else {
-                poop[i] = count;
+            if (i < MAX_COLUMN_CHART) {
+                if (type == PeePoopEnum.PEE.ordinal()) {
+                    pee[i] = count;
+                } else {
+                    poop[i] = count;
+                }
             }
         }
 
