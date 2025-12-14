@@ -38,6 +38,7 @@ import static com.mar.annotation.CallbackButtonType.CALLBACK_ANSWER;
 import static com.mar.annotation.CallbackButtonType.CALLBACK_CLOUD;
 import static com.mar.annotation.CallbackButtonType.CALLBACK_DETAIL_ANSWER;
 import static com.mar.annotation.CallbackButtonType.CALLBACK_JAVA;
+import static com.mar.annotation.CallbackButtonType.CALLBACK_PDD;
 import static com.mar.annotation.CallbackButtonType.CALLBACK_PYTHON;
 import static com.mar.annotation.CallbackButtonType.CALLBACK_SQL;
 import static com.mar.annotation.CallbackButtonType.CALLBACK_START;
@@ -144,7 +145,7 @@ public class BotService {
     @CallbackMethod(CALLBACK_START)
     private void startAction(UserMsg userMsg) {
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-        Stream.of(CALLBACK_JAVA, CALLBACK_PYTHON, CALLBACK_SQL, CALLBACK_CLOUD).forEachOrdered(
+        Stream.of(CALLBACK_JAVA, CALLBACK_PYTHON, CALLBACK_SQL, CALLBACK_CLOUD, CALLBACK_PDD).forEachOrdered(
                 type -> {
                     String title = getButtonText(type);
                     if (title != null) {
@@ -172,7 +173,7 @@ public class BotService {
         }
     }
 
-    @CallbackMethod({CALLBACK_JAVA, CALLBACK_PYTHON, CALLBACK_SQL, CALLBACK_CLOUD})
+    @CallbackMethod({CALLBACK_JAVA, CALLBACK_PYTHON, CALLBACK_SQL, CALLBACK_CLOUD, CALLBACK_PDD})
     private void sendRandomQuestionByType(UserMsg userMsg) {
         CallbackButtonType callbackType = CallbackButtonType.findByType(userMsg.getText());
         QuestionInfo question = libraryService.getRandomByType(callbackType.getType());

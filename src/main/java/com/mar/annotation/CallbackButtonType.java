@@ -13,6 +13,7 @@ public enum CallbackButtonType {
     CALLBACK_SQL("/sql", "\uD83D\uDDC4 SQL"),
     CALLBACK_PYTHON("/python", "\uD83D\uDC0D Python"),
     CALLBACK_CLOUD("/cloud", "☁ Cloud (Docker, MQ, Kuber, etc.)"),
+    CALLBACK_PDD("/pdd", "\uD83D\uDE97 ПДД (AB, CD) \uD83D\uDEFB"),
     CALLBACK_ANSWER("/answer", "Генерируется в рантайме."),
     CALLBACK_DETAIL_ANSWER("/detail_answer", "\uD83D\uDCAC Подробный ответ.");
 

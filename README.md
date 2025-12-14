@@ -59,11 +59,11 @@ java -jar ./target/jteach*.jar \
 
 1) Build image
    ``` sh 
-    docker build --no-cache -t marolok/jteach:1.4.0 .
+    docker build --no-cache -t marolok/jteach:1.5.0 .
    ```
 2) Push image
    ``` sh 
-    docker push marolok/jteach:1.4.0
+    docker push marolok/jteach:1.5.0
    ```
 3) Set ENV in [docker-compose.yml](./docker-compose.yml)
    ``` yml 
