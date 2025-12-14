@@ -10,49 +10,85 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class DatabaseServiceImpl implements DatabaseService {
 
     public static final int MAX_COLUMN_CHART = 7;
 
+    private static final ReentrantReadWriteLock emLocker = new ReentrantReadWriteLock();
+    private static final Lock readLocker = emLocker.readLock();
+    private static final Lock writeLocker = emLocker.writeLock();
+
+    private void execute(Consumer<EntityManager> doIt) {
+        try (EntityManager em = DBConfigurate.getEntityManager()) {
+            em.getTransaction().begin();
+            doIt.accept(em);
+            em.getTransaction().commit();
+        }
+    }
+
+    private <T> T execute(Function<EntityManager, T> doIt) {
+        T rez;
+        try (EntityManager em = DBConfigurate.getEntityManager()) {
+            em.getTransaction().begin();
+            rez = doIt.apply(em);
+            em.getTransaction().commit();
+        }
+        return rez;
+    }
+
     @Override
     public LastUserMsg getByUserId(Long userId) {
-        try (EntityManager em = DBConfigurate.getEntityManager()) {
+        List<LastUserMsg> lastUserMsgs;
+        readLocker.lock();
+        try {
+            lastUserMsgs = execute(entityManager -> {
+                return entityManager.createQuery("select lum from LastUserMsg lum where lum.userId = ?1", LastUserMsg.class)
+                        .setParameter(1, userId)
+                        .getResultList();
+            });
+        } finally {
+            readLocker.unlock();
+        }
 
-            List<LastUserMsg> lums = em.createQuery("select lum from LastUserMsg lum where lum.userId = ?1", LastUserMsg.class)
-                    .setParameter(1, userId)
-                    .getResultList();
+        if (lastUserMsgs == null || lastUserMsgs.isEmpty()) {
+            return null;
+        }
 
-            if (lums == null || lums.isEmpty()) {
-                return null;
+        if (lastUserMsgs.size() > 1) {
+            Set<Long> idForRemove = lastUserMsgs.parallelStream().map(LastUserMsg::getId).collect(Collectors.toSet());
+            writeLocker.lock();
+            try {
+                execute(entityManager -> {
+                    entityManager.createQuery("delete from LastUserMsg lum where lum.id in (?1)")
+                            .setParameter(1, idForRemove)
+                            .executeUpdate();
+                });
+            } finally {
+                writeLocker.unlock();
             }
-
-            if (lums.size() > 1) {
-                em.getTransaction().begin();
-                for (LastUserMsg lum : lums) {
-                    em.remove(lum);
-                }
-                em.getTransaction().commit();
-            } else {
-                return lums.get(0);
-            }
-        } catch (Exception e) {
-            log.error("Cannot get last user msg by ID = {}", userId, e);
+        } else {
+            return lastUserMsgs.get(0);
         }
         return null;
     }
 
     @Override
     public void saveLastUserMessage(LastUserMsg lastUserMsg) {
-        EntityManager em = DBConfigurate.getEntityManager();
+        writeLocker.lock();
         try {
-            em.getTransaction().begin();
-            em.persist(lastUserMsg);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            em.getTransaction().rollback();
-            throw new RuntimeException(e);
+            execute(entityManager -> {
+                entityManager.persist(lastUserMsg);
+            });
+        } finally {
+            writeLocker.unlock();
         }
     }
 
@@ -61,51 +97,51 @@ public class DatabaseServiceImpl implements DatabaseService {
         if (lastUserMsg == null) {
             return;
         }
-        EntityManager em = DBConfigurate.getEntityManager();
+        writeLocker.lock();
         try {
-            em.getTransaction().begin();
-            em.remove(lastUserMsg);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            em.getTransaction().rollback();
-            throw new RuntimeException(e);
+            execute(entityManager -> {
+                entityManager.remove(lastUserMsg);
+            });
+        } finally {
+            writeLocker.unlock();
         }
     }
 
     @Override
     public void saveUserChartData(UserChart userChart) {
-        try (EntityManager em = DBConfigurate.getEntityManager()) {
-            em.getTransaction().begin();
-            em.persist(userChart);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        writeLocker.lock();
+        try {
+            execute(entityManager -> {
+                entityManager.persist(userChart);
+            });
+        } finally {
+            writeLocker.unlock();
         }
     }
+
 
     @Override
     public PeeAndPoopData getUsrData(Long userId) {
         List<?> rez;
 
-        try (EntityManager em = DBConfigurate.getEntityManager()) {
-            em.getTransaction().begin();
-
-            rez = em.createNativeQuery(
-                            """
-                                    select date, data, count(*) from user_chart
-                                    where userId = ?1
-                                    group by date, data
-                                    order by date desc
-                                    limit ?2
-                                    """
-                    )
-                    .setParameter(1, userId)
-                    .setParameter(2, MAX_COLUMN_CHART * 2) // pee + poop data
-                    .getResultList();
-
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        readLocker.lock();
+        try {
+            rez = execute(entityManager -> {
+                return entityManager.createNativeQuery(
+                                """
+                                        select date, data, count(*) from user_chart
+                                        where userId = ?1
+                                        group by date, data
+                                        order by date desc
+                                        limit ?2
+                                        """
+                        )
+                        .setParameter(1, userId)
+                        .setParameter(2, MAX_COLUMN_CHART * 2) // pee + poop data
+                        .getResultList();
+            });
+        } finally {
+            readLocker.unlock();
         }
 
         LocalDate now = LocalDate.now();

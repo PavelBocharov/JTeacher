@@ -6,13 +6,14 @@
 
     <groupId>com.mar</groupId>
     <artifactId>jteach</artifactId>
-    <version>1.5.0</version>
+    <version>1.6.1</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
         <telegram.bot.api.version>9.2.0</telegram.bot.api.version>
         <hibernate.version>7.1.4.Final</hibernate.version>
         <sqlite.version>3.50.3.0</sqlite.version>
@@ -37,6 +38,7 @@
             <artifactId>java-telegram-bot-api</artifactId>
             <version>${telegram.bot.api.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>

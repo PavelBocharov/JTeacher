@@ -13,6 +13,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,7 +35,8 @@ public class DBLibraryService implements LibraryService {
     }
 
     private void initDB(String rootDir) {
-        Collection<File> jsonFiles = FileUtils.listFiles(new File(rootDir), new String[]{"json"}, false);
+        Collection<File> jsonFiles = FileUtils.listFiles(new File(rootDir), new String[]{"json"}, false)
+                .stream().sorted(Comparator.comparing(File::getAbsolutePath)).toList();
         log.debug("Find JSON files: {}.", jsonFiles);
         for (File file : jsonFiles) {
             log.debug("Work with '{}' file. Exist: {}, Is file: {}", file, file.exists(), file.isFile());

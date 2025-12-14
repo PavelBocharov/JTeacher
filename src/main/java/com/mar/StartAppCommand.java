@@ -1,11 +1,15 @@
 package com.mar;
 
+import com.mar.config.DBConfigurate;
 import com.mar.service.BotService;
 import com.mar.service.PeeAndPoopService;
 import com.mar.service.db.DatabaseServiceImpl;
 import com.mar.service.library.DBLibraryService;
 import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;
+
+import java.util.LinkedList;
+import java.util.List;
 
 @Slf4j
 @CommandLine.Command(
@@ -58,14 +62,33 @@ public class StartAppCommand implements Runnable {
         log.debug("Start image: {}", startImage);
 
         System.setProperty(ROOT_DIR, rootDir);
-        DBLibraryService dbLibraryService = new DBLibraryService(rootDir);
-        log.debug("LibraryService init: {}", dbLibraryService);
-        new BotService(botToken, dbLibraryService, new DatabaseServiceImpl(), startImage, baseImage);
+
+        List<Thread> workers = new LinkedList<>();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            log.debug("Shutdown hook...");
+            workers.forEach(Thread::interrupt);
+            DBConfigurate.shutdown();
+            log.debug("Shutdown hook... OK");
+        }));
+
+        if (botToken != null && botToken.length() == 46) {
+            Thread botThread = new Thread(() -> {
+                DBLibraryService dbLibraryService = new DBLibraryService(rootDir);
+                log.debug("LibraryService init: {}", dbLibraryService);
+                new BotService(botToken, dbLibraryService, new DatabaseServiceImpl(), startImage, baseImage);
+            });
+            workers.add(botThread);
+        }
 
         if (poopBot != null && poopBot.length() == 46) {
             log.debug("Pee&Poop bot token: {}", poopBot.substring(0, 11) + "******************************" + poopBot.substring(40));
-            new PeeAndPoopService(poopBot, new DatabaseServiceImpl());
+            Thread ppThread = new Thread(() -> {
+                new PeeAndPoopService(poopBot, new DatabaseServiceImpl());
+            });
+            workers.add(ppThread);
         }
 
+        workers.forEach(Thread::start);
     }
 }

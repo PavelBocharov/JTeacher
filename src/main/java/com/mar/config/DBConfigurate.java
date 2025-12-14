@@ -19,20 +19,8 @@ import org.sqlite.SQLiteDataSource;
 public class DBConfigurate {
 
     private static SessionFactory sessionFactory;
-    private static EntityManager entityManager;
 
-    public static EntityManager getEntityManager() {
-        return getSessionFactory().createEntityManager();
-    }
-
-    private synchronized static SessionFactory getSessionFactory() {
-        if (sessionFactory == null) {
-            initSessionFactory();
-        }
-        return sessionFactory;
-    }
-
-    private void initSessionFactory() {
+    static {
         String rootDir = System.getProperty(StartAppCommand.ROOT_DIR);
         String dbFile = rootDir.endsWith("/") ? rootDir + "library.db" : rootDir + "/library.db";
         log.debug("DataBase file: {}", dbFile);
@@ -50,9 +38,18 @@ public class DBConfigurate {
 
             sessionFactory = configuration.buildSessionFactory(serviceRegistry);
         } catch (Exception e) {
-            log.error("Cannot create Session factory for H2.", e);
-            throw new RuntimeException("There is issue in hibernate util");
+            log.error("Cannot create Session factory.", e);
+            throw new RuntimeException(e);
         }
+    }
+
+    public static EntityManager getEntityManager() {
+        return sessionFactory.createEntityManager();
+    }
+
+
+    public static void shutdown() {
+        if (sessionFactory != null) sessionFactory.close();
     }
 
 }
