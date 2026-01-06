@@ -8,6 +8,9 @@ import com.mar.service.library.DBLibraryService;
 import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -57,6 +60,14 @@ public class StartAppCommand implements Runnable {
 
     @Override
     public void run() {
+        try (InputStream banner = this.getClass().getClassLoader().getResourceAsStream("banner.txt")) {
+            if (banner != null) {
+                System.out.println(new String(banner.readAllBytes(), StandardCharsets.UTF_8));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         log.debug("Bot token: {}", botToken.substring(0, 11) + "******************************" + botToken.substring(40));
         log.debug("Root dir: {}", rootDir);
         log.debug("Start image: {}", startImage);

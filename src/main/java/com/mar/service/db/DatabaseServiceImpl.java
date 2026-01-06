@@ -153,7 +153,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             Byte type = (Byte) line[1];
             Integer count = (Integer) line[2];
 
-            int i = now.getDayOfYear() - date.getDayOfYear();
+            int i = (int) (now.toEpochDay() - date.toEpochDay());
             if (i < MAX_COLUMN_CHART) {
                 if (type == PeePoopEnum.PEE.ordinal()) {
                     pee[i] = count;
