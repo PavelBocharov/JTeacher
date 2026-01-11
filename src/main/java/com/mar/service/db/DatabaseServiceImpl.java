@@ -2,7 +2,6 @@ package com.mar.service.db;
 
 import com.mar.config.DBConfigurate;
 import com.mar.data.PeeAndPoopData;
-import com.mar.model.LastUserMsg;
 import com.mar.model.PeePoopEnum;
 import com.mar.model.UserChart;
 import jakarta.persistence.EntityManager;
@@ -10,12 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class DatabaseServiceImpl implements DatabaseService {
@@ -42,69 +39,6 @@ public class DatabaseServiceImpl implements DatabaseService {
             em.getTransaction().commit();
         }
         return rez;
-    }
-
-    @Override
-    public LastUserMsg getByUserId(Long userId) {
-        List<LastUserMsg> lastUserMsgs;
-        readLocker.lock();
-        try {
-            lastUserMsgs = execute(entityManager -> {
-                return entityManager.createQuery("select lum from LastUserMsg lum where lum.userId = ?1", LastUserMsg.class)
-                        .setParameter(1, userId)
-                        .getResultList();
-            });
-        } finally {
-            readLocker.unlock();
-        }
-
-        if (lastUserMsgs == null || lastUserMsgs.isEmpty()) {
-            return null;
-        }
-
-        if (lastUserMsgs.size() > 1) {
-            Set<Long> idForRemove = lastUserMsgs.parallelStream().map(LastUserMsg::getId).collect(Collectors.toSet());
-            writeLocker.lock();
-            try {
-                execute(entityManager -> {
-                    entityManager.createQuery("delete from LastUserMsg lum where lum.id in (?1)")
-                            .setParameter(1, idForRemove)
-                            .executeUpdate();
-                });
-            } finally {
-                writeLocker.unlock();
-            }
-        } else {
-            return lastUserMsgs.get(0);
-        }
-        return null;
-    }
-
-    @Override
-    public void saveLastUserMessage(LastUserMsg lastUserMsg) {
-        writeLocker.lock();
-        try {
-            execute(entityManager -> {
-                entityManager.persist(lastUserMsg);
-            });
-        } finally {
-            writeLocker.unlock();
-        }
-    }
-
-    @Override
-    public void delete(LastUserMsg lastUserMsg) {
-        if (lastUserMsg == null) {
-            return;
-        }
-        writeLocker.lock();
-        try {
-            execute(entityManager -> {
-                entityManager.remove(lastUserMsg);
-            });
-        } finally {
-            writeLocker.unlock();
-        }
     }
 
     @Override

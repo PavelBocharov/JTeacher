@@ -4,7 +4,6 @@ import com.mar.annotation.CallbackButtonType;
 import com.mar.annotation.CallbackMethod;
 import com.mar.data.QuestionInfo;
 import com.mar.data.UserMsg;
-import com.mar.model.LastUserMsg;
 import com.mar.service.db.DatabaseService;
 import com.mar.service.library.LibraryService;
 import com.mar.utils.BotUtils;
@@ -115,17 +114,6 @@ public class BotService {
             return;
         }
 
-        LastUserMsg lum = databaseService.getByUserId(userMsg.getId());
-        log.debug("Get last user({}) msg: {}", userMsg.getId(), lum);
-        if (lum != null) {
-            bot.execute(new DeleteMessage(userMsg.getChatId(), lum.getLastMsgId()));
-            databaseService.delete(lum);
-        }
-        databaseService.saveLastUserMessage(LastUserMsg.builder()
-                .userId(userMsg.getId())
-                .lastMsgId(userMsg.getMsgId())
-                .build());
-
         String[] tokens = userMsg.getText().split("~");
         CallbackButtonType callbackType = CallbackButtonType.findByType(tokens[0]);
         try {
@@ -133,6 +121,7 @@ public class BotService {
                 Method method = callbackMethods.get(callbackType);
                 method.setAccessible(true);
                 method.invoke(this, userMsg);
+                bot.execute(new DeleteMessage(userMsg.getChatId(), userMsg.getMsgId()));
                 return;
             }
         } catch (IllegalAccessException | InvocationTargetException e) {
@@ -285,20 +274,9 @@ public class BotService {
 
     private void workWithResponse(UserMsg userMsg, BaseRequest request, SendResponse response) {
         if (!response.isOk()) {
-            log.warn("BOT executor error >>> RQ:\n{}\nError: {}", request, response.description());
+            log.warn("BOT executor error >>> User msg: {},\nRQ:\n{}\nError: {}", userMsg, request, response.description());
         } else {
-            log.trace("BOT executor >>> RQ: {}, RS: {}", request, response);
-            LastUserMsg lastUserMsg = databaseService.getByUserId(userMsg.getId());
-            if (lastUserMsg != null) {
-                bot.execute(new DeleteMessage(userMsg.getChatId(), lastUserMsg.getLastMsgId()));
-                databaseService.delete(lastUserMsg);
-                databaseService.saveLastUserMessage(
-                        LastUserMsg.builder()
-                                .userId(userMsg.getId())
-                                .lastMsgId(response.message().messageId())
-                                .build()
-                );
-            }
+            log.trace("BOT executor >>> RQ: {},\nRS: {}", request, response);
         }
     }
 
